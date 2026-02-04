@@ -1,7 +1,7 @@
 package com.frain.frainapi.organizations.domain.model;
 
 import com.frain.frainapi.organizations.domain.model.valueobjects.*;
-import com.frain.frainapi.shared.domain.AuditableEntity;
+import com.frain.frainapi.shared.domain.model.AuditableEntity;
 import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 import jakarta.persistence.*;
 import lombok.Getter;

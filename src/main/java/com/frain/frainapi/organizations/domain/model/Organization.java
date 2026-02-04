@@ -2,14 +2,12 @@ package com.frain.frainapi.organizations.domain.model;
 
 import com.frain.frainapi.organizations.domain.exceptions.OrganizationOwnerAlreadyExistsException;
 import com.frain.frainapi.organizations.domain.model.valueobjects.*;
-import com.frain.frainapi.shared.domain.AuditableEntity;
+import com.frain.frainapi.shared.domain.model.AuditableEntity;
 import com.frain.frainapi.shared.domain.model.valueobjects.UserId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @NoArgsConstructor

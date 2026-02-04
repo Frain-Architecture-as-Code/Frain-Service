@@ -1,4 +1,4 @@
-package com.frain.frainapi.shared.domain;
+package com.frain.frainapi.shared.domain.model;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

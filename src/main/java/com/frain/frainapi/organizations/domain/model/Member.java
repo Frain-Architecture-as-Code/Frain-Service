@@ -5,7 +5,7 @@ import com.frain.frainapi.organizations.domain.model.valueobjects.MemberId;
 import com.frain.frainapi.organizations.domain.model.valueobjects.MemberName;
 import com.frain.frainapi.organizations.domain.model.valueobjects.MemberRole;
 import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
-import com.frain.frainapi.shared.domain.AuditableEntity;
+import com.frain.frainapi.shared.domain.model.AuditableEntity;
 import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
 import com.frain.frainapi.shared.domain.model.valueobjects.UserId;
 import jakarta.persistence.*;
