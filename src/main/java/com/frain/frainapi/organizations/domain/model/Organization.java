@@ -43,6 +43,15 @@ public class Organization extends AuditableEntity<Organization> {
         this.ownerId = ownerId;
     }
 
+    public void updateDetails(OrganizationName newName, OrganizationVisibility newVisibility) {
+        if (newName != null) {
+             this.name = newName;
+        }
+        if (visibility != null) {
+            this.visibility = newVisibility;
+        }
+    }
+
     public void transferOwnership(MemberId newOwnerId) {
         this.ownerId = newOwnerId;
     }

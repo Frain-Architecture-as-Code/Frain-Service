@@ -63,12 +63,21 @@ public class Member extends AuditableEntity<Member> {
         throw new InsufficientPermissionsException();
     }
 
-    public boolean canBePromotedTo() {
-        // for now only contributors can be promoted.
-        return isContributor();
+    public void canPromoteMembers() {
+        if (isOwner()) {
+            return;
+        }
+
+        throw new InsufficientPermissionsException();
     }
 
-    public boolean canPromote() {
-        return isOwner();
+    public void updateMember(MemberName name, MemberRole role) {
+        if (name != null) {
+            this.name = name;
+        }
+
+        if (role != null) {
+            this.role = role;
+        }
     }
 }
