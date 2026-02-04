@@ -49,4 +49,9 @@ public class Invitation extends AuditableEntity<Invitation> {
     public void decline() {
         this.status = InvitationStatus.DECLINED;
     }
+    public void updateStatus(InvitationStatus status) {
+        if (this.status == InvitationStatus.PENDING) {
+            this.status = status;
+        }
+    }
 }

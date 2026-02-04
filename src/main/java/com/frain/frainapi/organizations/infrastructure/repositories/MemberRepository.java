@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, MemberId> {
-    Optional<Member> findByOrganizationIdAndId(OrganizationId organizationId, MemberId id);
+    Optional<Member> findByIdAndOrganizationId(MemberId id, OrganizationId organizationId);
 
     List<Member> findAllByOrganizationId(OrganizationId organizationId);
 
