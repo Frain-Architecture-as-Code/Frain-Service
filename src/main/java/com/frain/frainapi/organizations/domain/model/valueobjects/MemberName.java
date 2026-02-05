@@ -17,4 +17,9 @@ public record MemberName(String value) {
             throw new InvalidMemberNameLengthException(value.length(), MIN_LENGTH, MAX_LENGTH);
         }
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

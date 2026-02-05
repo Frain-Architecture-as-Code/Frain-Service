@@ -17,7 +17,7 @@ public class Organization extends AuditableEntity<Organization> {
     private OrganizationId id;
 
     @Embedded
-    private MemberId ownerId;
+    private MemberId ownerMemberId;
 
     @Embedded
     @Setter
@@ -27,10 +27,10 @@ public class Organization extends AuditableEntity<Organization> {
     @Setter
     private OrganizationVisibility visibility;
 
-    public Organization(OrganizationId id, OrganizationName name, MemberId ownerId, OrganizationVisibility visibility) {
+    public Organization(OrganizationId id, OrganizationName name, MemberId ownerMemberId, OrganizationVisibility visibility) {
         this.id = id;
         this.name = name;
-        this.ownerId = ownerId;
+        this.ownerMemberId = ownerMemberId;
         this.visibility = visibility;
     }
 
@@ -38,7 +38,7 @@ public class Organization extends AuditableEntity<Organization> {
         if (ownerId == null) {
             throw new OrganizationOwnerAlreadyExistsException(this.getId().toString());
         }
-        this.ownerId = ownerId;
+        this.ownerMemberId = ownerId;
     }
 
     public void updateDetails(OrganizationName newName, OrganizationVisibility newVisibility) {
@@ -51,7 +51,7 @@ public class Organization extends AuditableEntity<Organization> {
     }
 
     public void transferOwnership(MemberId newOwnerId) {
-        this.ownerId = newOwnerId;
+        this.ownerMemberId = newOwnerId;
     }
 
     public Member enrollMember(MemberId memberId, UserId userId, MemberName name, MemberRole role) {

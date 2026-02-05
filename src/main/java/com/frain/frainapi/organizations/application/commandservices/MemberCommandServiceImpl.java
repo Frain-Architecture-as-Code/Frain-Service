@@ -1,6 +1,7 @@
 package com.frain.frainapi.organizations.application.commandservices;
 
 import com.frain.frainapi.organizations.domain.exceptions.MemberNotFoundException;
+import com.frain.frainapi.organizations.domain.model.Member;
 import com.frain.frainapi.organizations.domain.model.commands.UpdateMemberCommand;
 import com.frain.frainapi.organizations.domain.services.MemberCommandService;
 import com.frain.frainapi.organizations.infrastructure.repositories.MemberRepository;
@@ -21,7 +22,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
     @Override
     @Transactional
-    public void handle(UpdateMemberCommand command) {
+    public Member handle(UpdateMemberCommand command) {
         var targetMember = memberRepository.findById(command.targetMemberId())
                 .orElseThrow(() -> new MemberNotFoundException(command.targetMemberId()));
 
@@ -33,5 +34,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         memberRepository.save(targetMember);
         log.info("Member with ID {} has been updated.", command.targetMemberId());
+
+        return targetMember;
     }
 }

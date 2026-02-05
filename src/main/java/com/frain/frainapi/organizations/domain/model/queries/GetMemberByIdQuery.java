@@ -1,4 +1,6 @@
 package com.frain.frainapi.organizations.domain.model.queries;
 
-public record GetMemberByIdQuery() {
+import com.frain.frainapi.organizations.domain.model.valueobjects.MemberId;
+
+public record GetMemberByIdQuery(MemberId memberId) {
 }
