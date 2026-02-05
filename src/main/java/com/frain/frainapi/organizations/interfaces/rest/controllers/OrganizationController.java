@@ -13,11 +13,13 @@ import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.Cre
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.UpdateOrganizationRequest;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.OrganizationResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/organizations")
+@Tag(name = "Organization")
 public class OrganizationController {
 
     private final OrganizationCommandService organizationCommandService;
@@ -53,8 +55,7 @@ public class OrganizationController {
     }
 
 
-    @GetMapping
-    @RequestMapping("/{organizationId}")
+    @GetMapping("/{organizationId}")
     public ResponseEntity<OrganizationResponse> getOrganizationById(@PathVariable OrganizationId organizationId) {
         var currentUserId = userContext.getCurrentUserId();
         var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
@@ -76,8 +77,7 @@ public class OrganizationController {
         return ResponseEntity.ok(organizationResponse);
     }
 
-    @PatchMapping
-    @RequestMapping("/{organizationId}")
+    @PatchMapping("/{organizationId}")
     public ResponseEntity<OrganizationResponse> updateOrganizationById(@PathVariable OrganizationId organizationId, @RequestBody UpdateOrganizationRequest request) {
         var currentUserId = userContext.getCurrentUserId();
         var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));

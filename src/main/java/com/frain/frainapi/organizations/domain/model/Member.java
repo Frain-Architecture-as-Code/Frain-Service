@@ -27,6 +27,7 @@ public class Member extends AuditableEntity<Member> {
     private OrganizationId organizationId;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "name"))
     private MemberName name;
 
     @Enumerated(EnumType.STRING)

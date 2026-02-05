@@ -17,14 +17,14 @@ public class Organization extends AuditableEntity<Organization> {
     private OrganizationId id;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "owner_member_id"))
     private MemberId ownerMemberId;
 
     @Embedded
-    @Setter
+    @AttributeOverride(name = "value", column = @Column(name = "name"))
     private OrganizationName name;
 
     @Enumerated(EnumType.STRING)
-    @Setter
     private OrganizationVisibility visibility;
 
     public Organization(OrganizationId id, OrganizationName name, MemberId ownerMemberId, OrganizationVisibility visibility) {

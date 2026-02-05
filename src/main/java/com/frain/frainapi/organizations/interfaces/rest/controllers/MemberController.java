@@ -13,6 +13,7 @@ import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.M
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.UpdateMemberRequest;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.MemberResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/organizations/{organizationId}/members")
+@Tag(name = "Member")
 public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
