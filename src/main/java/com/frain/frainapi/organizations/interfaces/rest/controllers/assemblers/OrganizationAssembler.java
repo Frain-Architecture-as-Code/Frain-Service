@@ -11,7 +11,9 @@ public class OrganizationAssembler {
                 entity.getId().toString(),
                 entity.getOwnerMemberId().toString(),
                 entity.getName().toString(),
-                entity.getVisibility().toString()
+                entity.getVisibility().toString(),
+                entity.getCreatedAt().toString(),
+                entity.getUpdatedAt().toString()
         );
     }
 

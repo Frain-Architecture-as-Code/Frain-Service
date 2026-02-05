@@ -13,7 +13,9 @@ public class MemberAssembler {
                 member.getUserId().toString(),
                 member.getOrganizationId().toString(),
                 member.getName().toString(),
-                member.getRole().toString()
+                member.getRole().toString(),
+                member.getCreatedAt().toString(),
+                member.getUpdatedAt().toString()
         );
     }
 
