@@ -15,4 +15,9 @@ public record UserName(String value) {
             throw new StringLengthException(value.length(), MIN_LENGTH, MAX_LENGTH, "UserName");
         }
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

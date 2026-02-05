@@ -9,6 +9,7 @@ import com.frain.frainapi.organizations.domain.services.MemberCommandService;
 import com.frain.frainapi.organizations.domain.services.MemberQueryService;
 import com.frain.frainapi.organizations.domain.services.OrganizationQueryService;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.MemberAssembler;
+import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.MemberCommandAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.UpdateMemberRequest;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.MemberResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
@@ -22,14 +23,12 @@ import java.util.List;
 public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
-    private final OrganizationQueryService organizationQueryService;
 
     private final UserContext userContext;
 
-    public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService, OrganizationQueryService organizationQueryService, UserContext userContext) {
+    public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService, UserContext userContext) {
         this.memberCommandService = memberCommandService;
         this.memberQueryService = memberQueryService;
-        this.organizationQueryService = organizationQueryService;
         this.userContext = userContext;
     }
 
@@ -61,7 +60,9 @@ public class MemberController {
 
         var currentMember = result.get();
 
-        var targetMember = memberCommandService.handle(new UpdateMemberCommand(memberId, request.newRole(), request.newName(), currentMember));
+        var command = MemberCommandAssembler.toUpdateMemberCommandFromRequest(request, memberId, currentMember);
+
+        var targetMember = memberCommandService.handle(command);
 
         var memberResponse = MemberAssembler.toResponseFromEntity(targetMember);
 

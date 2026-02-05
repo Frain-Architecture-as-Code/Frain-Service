@@ -8,13 +8,13 @@ import com.frain.frainapi.organizations.domain.services.MemberQueryService;
 import com.frain.frainapi.organizations.domain.services.OrganizationCommandService;
 import com.frain.frainapi.organizations.domain.services.OrganizationQueryService;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.OrganizationAssembler;
+import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.OrganizationCommandAssembler;
+import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.CreateOrganizationRequest;
+import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.UpdateOrganizationRequest;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.OrganizationResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/organizations")
@@ -31,6 +31,25 @@ public class OrganizationController {
         this.organizationQueryService = organizationQueryService;
         this.memberQueryService = memberQueryService;
         this.userContext = userContext;
+    }
+
+
+    @PostMapping
+    public ResponseEntity<OrganizationResponse> createOrganization(@RequestBody CreateOrganizationRequest request) {
+        var currentUser = userContext.getCurrentUser();
+
+        var command = OrganizationCommandAssembler.toCreateOrganizationCommandFromRequest(request, currentUser);
+
+        var organizationId = organizationCommandService.handle(command);
+
+        var organizationResult = organizationQueryService.handle(new GetOrganizationByIdQuery(organizationId));
+
+        if (organizationResult.isEmpty()) {
+            throw new OrganizationNotFoundException(organizationId);
+        }
+        var organization = organizationResult.get();
+        var organizationResponse = OrganizationAssembler.toResponseFromEntity(organization);
+        return ResponseEntity.ok(organizationResponse);
     }
 
 
@@ -57,5 +76,26 @@ public class OrganizationController {
         return ResponseEntity.ok(organizationResponse);
     }
 
+    @PatchMapping
+    @RequestMapping("/{organizationId}")
+    public ResponseEntity<OrganizationResponse> updateOrganizationById(@PathVariable OrganizationId organizationId, @RequestBody UpdateOrganizationRequest request) {
+        var currentUserId = userContext.getCurrentUserId();
+        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
+        if (result.isEmpty()) {
+            throw new RuntimeException("Current user is not a member of the organization");
+        }
+        var requestingMember = result.get();
 
+        var command = OrganizationCommandAssembler.toUpdateOrganizationCommandFromRequest(organizationId, request, requestingMember);
+        organizationCommandService.handle(command);
+
+        var organizationResult = organizationQueryService.handle(new GetOrganizationByIdQuery(organizationId));
+        if (organizationResult.isEmpty()) {
+            throw new OrganizationNotFoundException(organizationId);
+        }
+
+        var organization = organizationResult.get();
+        var organizationResponse = OrganizationAssembler.toResponseFromEntity(organization);
+        return ResponseEntity.ok(organizationResponse);
+    }
 }

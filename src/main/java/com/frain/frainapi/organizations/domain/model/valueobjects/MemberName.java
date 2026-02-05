@@ -6,8 +6,8 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public record MemberName(String value) {
-    private static final int MAX_LENGTH = 30;
-    private static final int MIN_LENGTH = 6;
+    public static final int MIN_LENGTH = 3;
+    public static final int MAX_LENGTH = 50;
 
     public MemberName {
         if (value == null || value.isBlank()) {
