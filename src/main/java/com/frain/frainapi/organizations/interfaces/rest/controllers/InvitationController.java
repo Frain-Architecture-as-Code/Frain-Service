@@ -58,8 +58,6 @@ public class InvitationController {
         }
 
         var invitations = invitationQueryService.handle(new GetInvitationsByOrganizationIdQuery(organizationId));
-
-
         var invitationResponses = InvitationAssembler.toResponseListFromEntities(invitations);
 
         return ResponseEntity.ok(invitationResponses);
@@ -90,14 +88,9 @@ public class InvitationController {
 
     @PatchMapping("/{invitationId}")
     public ResponseEntity<?> acceptInvitation(@PathVariable OrganizationId organizationId, @PathVariable InvitationId invitationId) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
-        if (result.isEmpty()) {
-            throw new RuntimeException("Current user is not a member of the organization");
-        }
-        var currentMember = result.get();
+        var currentUserEmail = userContext.getCurrentUserEmail();
 
-        var command = InvitationCommandAssembler.toAcceptInvitationCommandFromIds(organizationId, invitationId, currentMember);
+        var command = InvitationCommandAssembler.toAcceptInvitationCommandFromIds(organizationId, invitationId, currentUserEmail);
 
         invitationCommandService.handle(command);
 
@@ -108,13 +101,9 @@ public class InvitationController {
 
     @DeleteMapping("/{invitationId}")
     public ResponseEntity<?> declineInvitation(@PathVariable OrganizationId organizationId, @PathVariable InvitationId invitationId) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
-        if (result.isEmpty()) {
-            throw new RuntimeException("Current user is not a member of the organization");
-        }
-        var currentMember = result.get();
-        var command = InvitationCommandAssembler.toDeclineInvitationCommandFromIds(organizationId, invitationId, currentMember);
+        var currentUserEmail = userContext.getCurrentUserEmail();
+
+        var command = InvitationCommandAssembler.toDeclineInvitationCommandFromIds(organizationId, invitationId, currentUserEmail);
         invitationCommandService.handle(command);
 
         var invitationResult = InvitationResponseAssembler.toInvitationDeclinedResponse(invitationId);

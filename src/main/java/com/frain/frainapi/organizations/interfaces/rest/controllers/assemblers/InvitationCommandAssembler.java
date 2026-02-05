@@ -7,6 +7,7 @@ import com.frain.frainapi.organizations.domain.model.commands.SendInvitationComm
 import com.frain.frainapi.organizations.domain.model.valueobjects.InvitationId;
 import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.SendInvitationRequest;
+import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 
 public class InvitationCommandAssembler {
 
@@ -14,11 +15,11 @@ public class InvitationCommandAssembler {
         return new SendInvitationCommand(organizationId, inviter, request.targetEmail() , request.role());
     }
 
-    public static AcceptInvitationCommand toAcceptInvitationCommandFromIds(OrganizationId organizationId, InvitationId invitationId, Member currentMember) {
-        return new AcceptInvitationCommand(invitationId, organizationId, currentMember);
+    public static AcceptInvitationCommand toAcceptInvitationCommandFromIds(OrganizationId organizationId, InvitationId invitationId, EmailAddress currentUserEmail) {
+        return new AcceptInvitationCommand(invitationId, organizationId, currentUserEmail);
     }
 
-    public static DeclineInvitationCommand toDeclineInvitationCommandFromIds(OrganizationId organizationId, InvitationId invitationId, Member currentMember) {
-        return new DeclineInvitationCommand(invitationId, organizationId, currentMember);
+    public static DeclineInvitationCommand toDeclineInvitationCommandFromIds(OrganizationId organizationId, InvitationId invitationId, EmailAddress currentUserEmail) {
+        return new DeclineInvitationCommand(invitationId, organizationId, currentUserEmail);
     }
 }
