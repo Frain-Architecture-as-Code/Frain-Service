@@ -8,7 +8,11 @@ import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, InvitationId> {
     boolean existsByOrganizationIdAndTargetEmailAndStatus(OrganizationId organizationId, EmailAddress targetEmail, InvitationStatus status);
+
+    List<Invitation> findAllByOrganizationId(OrganizationId organizationId);
 }

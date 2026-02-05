@@ -1,13 +1,11 @@
 package com.frain.frainapi.organizations.interfaces.rest.controllers;
 
-import com.frain.frainapi.organizations.domain.model.commands.UpdateMemberCommand;
 import com.frain.frainapi.organizations.domain.model.queries.GetMemberByUserIdAndOrganizationIdQuery;
 import com.frain.frainapi.organizations.domain.model.queries.GetMembersByOrganizationIdQuery;
 import com.frain.frainapi.organizations.domain.model.valueobjects.MemberId;
 import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
 import com.frain.frainapi.organizations.domain.services.MemberCommandService;
 import com.frain.frainapi.organizations.domain.services.MemberQueryService;
-import com.frain.frainapi.organizations.domain.services.OrganizationQueryService;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.MemberAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.MemberCommandAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.UpdateMemberRequest;
@@ -46,7 +44,7 @@ public class MemberController {
         var query = new GetMembersByOrganizationIdQuery(organizationId);
         var memberList = memberQueryService.handle(query);
 
-        var memberListResponse = MemberAssembler.toResponsesFromEntities(memberList);
+        var memberListResponse = MemberAssembler.toResponseListFromEntities(memberList);
 
         return ResponseEntity.ok(memberListResponse);
     }

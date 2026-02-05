@@ -42,29 +42,31 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
 
     @Override
     @Transactional
-    public void handle(SendInvitationCommand command) {
-
-        var performingMember = memberRepository.findById(command.performBy()).orElseThrow(() -> new MemberNotFoundException(command.performBy()));
+    public InvitationId handle(SendInvitationCommand command) {
 
         var targetOrganization = organizationRepository.findById(command.organizationId()).orElseThrow(() -> new OrganizationNotFoundException(command.organizationId()));
 
-        if (!performingMember.canInvitePeople()) {
-            throw new InsufficientPermissionsException();
-        }
+        command.performBy().canInvitePeople();
 
-        var invitation = new Invitation(InvitationId.generate(), command.organizationId(), command.performBy(), command.targetEmail(), command.role());
+        var invitation = new Invitation(InvitationId.generate(), command.organizationId(), command.performBy().getId(), command.targetEmail(), command.role());
 
         invitationRepository.save(invitation);
 
         eventPublisher.publishEvent(new InvitationSentEvent(invitation.getId(), invitation.getInviterId(), invitation.getTargetEmail(), targetOrganization.getName()));
 
         log.info("Invitation with ID {} has been sent to {}.", invitation.getInviterId(), command.targetEmail());
+
+        return invitation.getId();
     }
 
     @Override
     @Transactional
-    public void handle(DeclineInvitationCommand command) {
+    public InvitationId handle(DeclineInvitationCommand command) {
         var invitation = invitationRepository.findById(command.invitationId()).orElseThrow(() -> new InvitationNotFoundException(command.invitationId()));
+
+        if (!invitation.getTargetEmail().equals(command.currentUserEmail())) {
+            throw new InsufficientPermissionsException("You do not have permission to decline this invitation.");
+        }
 
         invitation.updateStatus(InvitationStatus.DECLINED);
 
@@ -74,13 +76,17 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
 
 
         log.info("Invitation with ID {} has been declined.", command.invitationId());
-
+        return  invitation.getId();
     }
 
     @Override
     @Transactional
-    public void handle(AcceptInvitationCommand command) {
+    public InvitationId handle(AcceptInvitationCommand command) {
         var invitation = invitationRepository.findById(command.invitationId()).orElseThrow(() -> new InvitationNotFoundException(command.invitationId()));
+
+        if (!invitation.getTargetEmail().equals(command.currentUserEmail())) {
+            throw new InsufficientPermissionsException("You do not have permission to decline this invitation.");
+        }
 
         invitation.updateStatus(InvitationStatus.ACCEPTED);
         invitationRepository.save(invitation);
@@ -88,5 +94,6 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
         eventPublisher.publishEvent(new InvitationAcceptedEvent(invitation.getId(), invitation.getInviterId(), invitation.getTargetEmail()));
 
         log.info("Invitation with ID {} has been accepted.", command.invitationId());
+        return invitation.getId();
     }
 }

@@ -19,7 +19,7 @@ public class MemberAssembler {
         );
     }
 
-    public static List<MemberResponse> toResponsesFromEntities(List<Member> members) {
+    public static List<MemberResponse> toResponseListFromEntities(List<Member> members) {
         return members.stream()
                 .map(MemberAssembler::toResponseFromEntity)
                 .toList();

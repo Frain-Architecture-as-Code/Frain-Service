@@ -61,7 +61,7 @@ public class Member extends AuditableEntity<Member> {
             return true;
         }
 
-        throw new InsufficientPermissionsException();
+        throw new InsufficientPermissionsException("Only owners and admins can invite people");
     }
 
     public void canPromoteMembers() {
@@ -69,7 +69,7 @@ public class Member extends AuditableEntity<Member> {
             return;
         }
 
-        throw new InsufficientPermissionsException();
+        throw new InsufficientPermissionsException("Only owners can promote members");
     }
 
     public void updateMember(MemberName name, MemberRole role) {

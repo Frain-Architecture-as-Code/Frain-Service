@@ -1,4 +1,6 @@
 package com.frain.frainapi.organizations.domain.model.queries;
 
-public record GetInvitationsByOrganizationIdQuery() {
+import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
+
+public record GetInvitationsByOrganizationIdQuery(OrganizationId organizationId) {
 }

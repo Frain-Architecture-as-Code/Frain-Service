@@ -17,7 +17,7 @@ public class OrganizationAssembler {
         );
     }
 
-    public static List<OrganizationResponse> toResponsesFromEntities(List<Organization> entities) {
+    public static List<OrganizationResponse> toResponseListFromEntities(List<Organization> entities) {
         return entities.stream()
                 .map(OrganizationAssembler::toResponseFromEntity)
                 .toList();
