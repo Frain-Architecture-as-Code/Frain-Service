@@ -81,4 +81,20 @@ public class Member extends AuditableEntity<Member> {
             this.role = role;
         }
     }
+
+    public boolean canCreateProjects() {
+        if (isAdminRole() || isOwner()) {
+            return true;
+        }
+
+        throw new InsufficientPermissionsException("Only owners and admins can create projects");
+    }
+
+    public boolean canUpdateProjects() {
+        if (isAdminRole() || isOwner()) {
+            return true;
+        }
+
+        throw new InsufficientPermissionsException("Only owners and admins can update projects");
+    }
 }
