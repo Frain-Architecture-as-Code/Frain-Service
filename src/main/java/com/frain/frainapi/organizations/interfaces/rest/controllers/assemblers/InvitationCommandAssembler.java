@@ -12,13 +12,13 @@ import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 public class InvitationCommandAssembler {
 
     public static SendInvitationCommand toSendInvitationCommandFromRequest(
-        OrganizationId organizationId,
+        String organizationId,
         Member inviter,
         EmailAddress senderEmail,
         SendInvitationRequest request
     ) {
         return new SendInvitationCommand(
-            organizationId,
+            OrganizationId.fromString(organizationId),
             inviter,
             request.targetEmail(),
             request.role(),

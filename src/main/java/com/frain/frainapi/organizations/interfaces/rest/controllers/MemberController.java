@@ -23,25 +23,19 @@ import java.util.List;
 public class MemberController {
     private final MemberCommandService memberCommandService;
     private final MemberQueryService memberQueryService;
+    private final OrganizationContextUtils organizationContextUtils;
 
-    private final UserContext userContext;
-
-    public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService, UserContext userContext) {
+    public MemberController(MemberCommandService memberCommandService, MemberQueryService memberQueryService, OrganizationContextUtils organizationContextUtils) {
         this.memberCommandService = memberCommandService;
         this.memberQueryService = memberQueryService;
-        this.userContext = userContext;
+        this.organizationContextUtils = organizationContextUtils;
     }
 
     @GetMapping
-    public ResponseEntity<List<MemberResponse>> getMembers(@PathVariable OrganizationId organizationId) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
+    public ResponseEntity<List<MemberResponse>> getMembers(@PathVariable String organizationId) {
+        organizationContextUtils.validateUserBelongsToOrganization(organizationId);
 
-        if (result.isEmpty()) {
-            throw new RuntimeException("Current user is not a member of the organization");
-        }
-
-        var query = new GetMembersByOrganizationIdQuery(organizationId);
+        var query = new GetMembersByOrganizationIdQuery(OrganizationId.fromString(organizationId));
         var memberList = memberQueryService.handle(query);
 
         var memberListResponse = MemberAssembler.toResponseListFromEntities(memberList);
@@ -50,15 +44,9 @@ public class MemberController {
     }
 
     @PatchMapping("/{memberId}")
-    public ResponseEntity<MemberResponse> updateMember(@PathVariable OrganizationId organizationId, @PathVariable MemberId memberId, @RequestBody UpdateMemberRequest request) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
+    public ResponseEntity<MemberResponse> updateMember(@PathVariable String organizationId, @PathVariable String memberId, @RequestBody UpdateMemberRequest request) {
 
-        if (result.isEmpty()) {
-            throw new RuntimeException("Current user is not a member of the organization");
-        }
-
-        var currentMember = result.get();
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
 
         var command = MemberCommandAssembler.toUpdateMemberCommandFromRequest(request, memberId, currentMember);
 

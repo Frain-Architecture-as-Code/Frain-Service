@@ -9,9 +9,9 @@ public class MemberCommandAssembler {
 
     public static UpdateMemberCommand toUpdateMemberCommandFromRequest(
             UpdateMemberRequest request,
-            MemberId memberId,
+            String memberId,
             Member currentMember
     ) {
-        return new UpdateMemberCommand(memberId, request.newRole(), request.newName(), currentMember);
+        return new UpdateMemberCommand(MemberId.fromString(memberId), request.newRole(), request.newName(), currentMember);
     }
 }

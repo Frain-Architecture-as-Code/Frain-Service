@@ -29,40 +29,28 @@ public class InvitationController {
     private final InvitationCommandService invitationCommandService;
     private final InvitationQueryService invitationQueryService;
     private final MemberQueryService memberQueryService;
+    private final OrganizationContextUtils organizationContextUtils;
 
     private final UserContext userContext;
 
     public InvitationController(
-        InvitationCommandService invitationCommandService,
-        InvitationQueryService invitationQueryService,
-        MemberQueryService memberQueryService,
-        UserContext userContext
+            InvitationCommandService invitationCommandService,
+            InvitationQueryService invitationQueryService,
+            MemberQueryService memberQueryService, OrganizationContextUtils organizationContextUtils,
+            UserContext userContext
     ) {
         this.invitationCommandService = invitationCommandService;
         this.invitationQueryService = invitationQueryService;
         this.memberQueryService = memberQueryService;
+        this.organizationContextUtils = organizationContextUtils;
         this.userContext = userContext;
     }
 
     @GetMapping
     public ResponseEntity<List<InvitationResponse>> getInvitations(
-        @PathVariable OrganizationId organizationId
+        @PathVariable String organizationId
     ) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(
-            new GetMemberByUserIdAndOrganizationIdQuery(
-                currentUserId,
-                organizationId
-            )
-        );
-
-        if (result.isEmpty()) {
-            throw new RuntimeException(
-                "Current user is not a member of the organization"
-            );
-        }
-
-        var currentMember = result.get();
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
 
         if (!currentMember.isOwner()) {
             throw new InsufficientPermissionsException(
@@ -71,7 +59,7 @@ public class InvitationController {
         }
 
         var invitations = invitationQueryService.handle(
-            new GetInvitationsByOrganizationIdQuery(organizationId)
+            new GetInvitationsByOrganizationIdQuery(OrganizationId.fromString(organizationId))
         );
         var invitationResponses =
             InvitationAssembler.toResponseListFromEntities(invitations);
@@ -81,22 +69,11 @@ public class InvitationController {
 
     @PostMapping
     public ResponseEntity<InvitationResponse> sendInvitation(
-        @PathVariable OrganizationId organizationId,
+        @PathVariable String organizationId,
         @RequestBody SendInvitationRequest request
     ) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(
-            new GetMemberByUserIdAndOrganizationIdQuery(
-                currentUserId,
-                organizationId
-            )
-        );
-        if (result.isEmpty()) {
-            throw new RuntimeException(
-                "Current user is not a member of the organization"
-            );
-        }
-        var currentMember = result.get();
+
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
 
         var currentUserEmail = userContext.getCurrentUserEmail();
 
