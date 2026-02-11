@@ -1,4 +1,4 @@
-package com.frain.frainapi.organizations.domain.model.valueobjects;
+package com.frain.frainapi.projects.domain.model.valueobjects;
 
 import jakarta.persistence.Embeddable;
 

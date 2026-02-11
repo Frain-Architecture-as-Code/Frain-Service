@@ -20,4 +20,8 @@ public record UserId(UUID value) {
     public String toString() {
         return value.toString();
     }
+
+    public static UserId fromString(String id) {
+        return new UserId(UUID.fromString(id));
+    }
 }
