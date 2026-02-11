@@ -2,6 +2,7 @@ package com.frain.frainapi.organizations.infrastructure.acl;
 
 import com.frain.frainapi.organizations.domain.exceptions.MemberNotFoundException;
 import com.frain.frainapi.organizations.domain.exceptions.UserNotFoundInOrganizationException;
+import com.frain.frainapi.organizations.domain.model.valueobjects.MemberId;
 import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
 import com.frain.frainapi.organizations.infrastructure.repositories.MemberRepository;
 import com.frain.frainapi.organizations.interfaces.acl.OrganizationContextFacade;
@@ -72,6 +73,34 @@ public class OrganizationContextFacadeImpl implements OrganizationContextFacade 
         var member = result.get();
 
         return member.canUpdateProjects();
+    }
+
+    @Override
+    public String getMemberRole(String organizationId, String memberId) {
+        var orgId = OrganizationId.fromString(organizationId);
+        var memId = MemberId.fromString(memberId);
+
+        var result = memberRepository.findById(memId);
+
+        if (result.isEmpty()) {
+            throw new MemberNotFoundException(memId);
+        }
+
+        var member = result.get();
+
+        if (!member.getOrganizationId().equals(orgId)) {
+            throw new MemberNotFoundException(memId);
+        }
+
+        return member.getRole().name();
+    }
+
+    @Override
+    public String getOrganizationIdByProjectId(String projectId) {
+        // This method needs to be implemented by querying the project repository
+        // For now, we'll throw an exception as this requires access to the projects bounded context
+        // This will be called from a service that has access to both contexts
+        throw new UnsupportedOperationException("This method should be implemented through project repository access");
     }
 
 

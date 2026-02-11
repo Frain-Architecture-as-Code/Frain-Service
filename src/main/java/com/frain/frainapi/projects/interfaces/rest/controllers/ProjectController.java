@@ -12,11 +12,13 @@ import com.frain.frainapi.projects.interfaces.rest.controllers.requests.CreatePr
 import com.frain.frainapi.projects.interfaces.rest.controllers.requests.UpdateProjectVisibilityRequest;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ProjectResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/organizations/{organizationId}/projects")
+@Tag(name = "Projects")
 public class ProjectController {
     private final ProjectCommandService projectCommandService;
     private final ProjectQueryService projectQueryService;
