@@ -50,7 +50,7 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
         var targetOrganization = organizationRepository
             .findById(command.organizationId())
             .orElseThrow(() ->
-                new OrganizationNotFoundException(command.organizationId())
+                new OrganizationNotFoundException(command.organizationId().toString())
             );
 
         command.performBy().canInvitePeople();

@@ -14,7 +14,7 @@ public class OrganizationCommandAssembler {
        return new CreateOrganizationCommand(request.name(), request.visibility(), currentUser.id(), new MemberName(currentUser.userName().toString()));
     }
 
-    public static UpdateOrganizationCommand toUpdateOrganizationCommandFromRequest(OrganizationId organizationId, UpdateOrganizationRequest request, Member requestingMember) {
-        return new UpdateOrganizationCommand(organizationId, request.name(), request.visibility(), requestingMember);
+    public static UpdateOrganizationCommand toUpdateOrganizationCommandFromRequest(String organizationId, UpdateOrganizationRequest request, Member requestingMember) {
+        return new UpdateOrganizationCommand(OrganizationId.fromString(organizationId), request.name(), request.visibility(), requestingMember);
     }
 }
