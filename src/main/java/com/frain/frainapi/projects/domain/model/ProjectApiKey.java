@@ -40,4 +40,8 @@ public class ProjectApiKey extends AuditableEntity<ProjectApiKey> {
         this.memberId = memberId;
         this.apiKey = apiKey;
     }
+
+    public void recordUsage() {
+        this.lastUsedAt = LocalDateTime.now();
+    }
 }
