@@ -16,6 +16,10 @@ public record MemberId(UUID value) {
         return new MemberId(UUID.randomUUID());
     }
 
+    public static MemberId fromString(String id) {
+        return new MemberId(UUID.fromString(id));
+    }
+
     @Override
     public String toString() {
         return value.toString();
