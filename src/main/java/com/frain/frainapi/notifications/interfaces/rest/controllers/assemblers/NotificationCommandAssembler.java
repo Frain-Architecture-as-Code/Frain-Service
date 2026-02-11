@@ -10,10 +10,32 @@ import com.frain.frainapi.notifications.interfaces.rest.controllers.requests.Upd
 import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 
 public class NotificationCommandAssembler {
-    public static UpdateNotificationStatusCommand toUpdateNotificationStatusCommandFromRequest(UpdateNotificationStatusRequest request, NotificationId notificationId, EmailAddress userEmail) {
-        return new UpdateNotificationStatusCommand(notificationId, request.newStatus(), userEmail);
+
+    public static UpdateNotificationStatusCommand toUpdateNotificationStatusCommandFromRequest(
+        UpdateNotificationStatusRequest request,
+        NotificationId notificationId,
+        EmailAddress userEmail
+    ) {
+        return new UpdateNotificationStatusCommand(
+            notificationId,
+            request.newStatus(),
+            userEmail
+        );
     }
-    public static SendNotificationCommand toSendNotificationCommand(String recipient, String sender, String message, String resourceId, String type) {
-        return new SendNotificationCommand(new NotificationMessage(message), ResourceId.fromString(resourceId), new EmailAddress(recipient), new EmailAddress(sender), NotificationType.valueOf(type));
+
+    public static SendNotificationCommand toSendNotificationCommand(
+        String recipientEmail,
+        String senderEmail,
+        String message,
+        String resourceId,
+        String type
+    ) {
+        return new SendNotificationCommand(
+            new NotificationMessage(message),
+            ResourceId.fromString(resourceId),
+            new EmailAddress(recipientEmail),
+            new EmailAddress(senderEmail),
+            NotificationType.valueOf(type)
+        );
     }
 }
