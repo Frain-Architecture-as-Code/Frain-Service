@@ -53,6 +53,12 @@ public class Notification extends AuditableEntity<Notification> {
         }
     }
 
+    public void markAsUnread() {
+        if (this.status == NotificationStatus.READ) {
+            this.status = NotificationStatus.UNREAD;
+        }
+    }
+
     public void markAsArchived() {
         if (this.status != NotificationStatus.ARCHIVED) {
             this.status = NotificationStatus.ARCHIVED;
