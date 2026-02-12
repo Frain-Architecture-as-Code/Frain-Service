@@ -38,6 +38,18 @@ public class InvitationCommandAssembler {
         );
     }
 
+    public static AcceptInvitationCommand toAcceptInvitationCommandFromStrings(
+        String organizationId,
+        String invitationId,
+        EmailAddress currentUserEmail
+    ) {
+        return new AcceptInvitationCommand(
+            InvitationId.fromString(invitationId),
+            OrganizationId.fromString(organizationId),
+            currentUserEmail
+        );
+    }
+
     public static DeclineInvitationCommand toDeclineInvitationCommandFromIds(
         OrganizationId organizationId,
         InvitationId invitationId,
@@ -46,6 +58,18 @@ public class InvitationCommandAssembler {
         return new DeclineInvitationCommand(
             invitationId,
             organizationId,
+            currentUserEmail
+        );
+    }
+
+    public static DeclineInvitationCommand toDeclineInvitationCommandFromStrings(
+        String organizationId,
+        String invitationId,
+        EmailAddress currentUserEmail
+    ) {
+        return new DeclineInvitationCommand(
+            InvitationId.fromString(invitationId),
+            OrganizationId.fromString(organizationId),
             currentUserEmail
         );
     }

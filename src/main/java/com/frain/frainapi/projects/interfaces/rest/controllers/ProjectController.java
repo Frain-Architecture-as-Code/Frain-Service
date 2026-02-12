@@ -31,10 +31,10 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(@PathVariable OrganizationId organizationId, @RequestBody CreateProjectRequest request) {
+    public ResponseEntity<ProjectResponse> createProject(@PathVariable String organizationId, @RequestBody CreateProjectRequest request) {
         var currentUserId = userContext.getCurrentUserId();
 
-        var command = ProjectCommandAssembler.toCreateProjectCommandFromRequest(request, currentUserId, organizationId);
+        var command = ProjectCommandAssembler.toCreateProjectCommandFromRequestAndString(request, currentUserId, organizationId);
 
         var result = projectCommandService.handle(command);
 
@@ -50,9 +50,9 @@ public class ProjectController {
     }
 
     @PatchMapping("/{projectId}")
-    public ResponseEntity<ProjectResponse> updateProject(@PathVariable OrganizationId organizationId, @PathVariable ProjectId projectId, @RequestBody UpdateProjectVisibilityRequest request) {
+    public ResponseEntity<ProjectResponse> updateProject(@PathVariable String organizationId, @PathVariable String projectId, @RequestBody UpdateProjectVisibilityRequest request) {
         var userId = userContext.getCurrentUserId();
-        var command = ProjectCommandAssembler.toUpdateProjectVisibilityCommandFromRequest(organizationId, projectId, request, userId);
+        var command = ProjectCommandAssembler.toUpdateProjectVisibilityCommandFromRequestAndStrings(organizationId, projectId, request, userId);
 
         var result = projectCommandService.handle(command);
 

@@ -47,19 +47,19 @@ public class ProjectApiKeyController {
 
     @PostMapping
     public ResponseEntity<ProjectApiKeyCreatedResponse> createApiKey(
-            @PathVariable OrganizationId organizationId,
-            @PathVariable ProjectId projectId,
+            @PathVariable String organizationId,
+            @PathVariable String projectId,
             @Valid @RequestBody CreateApiKeyRequest request
     ) {
         var currentUserId = userContext.getCurrentUserId();
         var requestingMemberId = MemberId.fromString(
                 organizationContextFacade.getMemberIdForUserInOrganization(
-                        organizationId.toString(),
+                        organizationId,
                         currentUserId.toString()
                 )
         );
 
-        var command = ProjectApiKeyAssembler.toCreateProjectApiKeyCommand(
+        var command = ProjectApiKeyAssembler.toCreateProjectApiKeyCommandFromStrings(
                 request,
                 projectId,
                 organizationId,
@@ -77,10 +77,10 @@ public class ProjectApiKeyController {
 
     @GetMapping
     public ResponseEntity<List<ProjectApiKeyResponse>> listApiKeys(
-            @PathVariable OrganizationId organizationId,
-            @PathVariable ProjectId projectId
+            @PathVariable String organizationId,
+            @PathVariable String projectId
     ) {
-        var query = new GetProjectApiKeysQuery(projectId);
+        var query = new GetProjectApiKeysQuery(ProjectId.fromString(projectId));
         var apiKeys = projectApiKeyQueryService.handle(query);
 
         var response = apiKeys.stream()
@@ -92,19 +92,19 @@ public class ProjectApiKeyController {
 
     @DeleteMapping("/{apiKeyId}")
     public ResponseEntity<Void> revokeApiKey(
-            @PathVariable OrganizationId organizationId,
-            @PathVariable ProjectId projectId,
-            @PathVariable ProjectApiKeyId apiKeyId
+            @PathVariable String organizationId,
+            @PathVariable String projectId,
+            @PathVariable String apiKeyId
     ) {
         var currentUserId = userContext.getCurrentUserId();
         var requestingMemberId = MemberId.fromString(
                 organizationContextFacade.getMemberIdForUserInOrganization(
-                        organizationId.toString(),
+                        organizationId,
                         currentUserId.toString()
                 )
         );
 
-        var command = ProjectApiKeyAssembler.toRevokeCommand(
+        var command = ProjectApiKeyAssembler.toRevokeCommandFromStrings(
                 apiKeyId,
                 organizationId,
                 requestingMemberId

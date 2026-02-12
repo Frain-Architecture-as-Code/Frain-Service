@@ -23,6 +23,18 @@ public class NotificationCommandAssembler {
         );
     }
 
+    public static UpdateNotificationStatusCommand toUpdateNotificationStatusCommandFromRequestAndString(
+        UpdateNotificationStatusRequest request,
+        String notificationId,
+        EmailAddress userEmail
+    ) {
+        return new UpdateNotificationStatusCommand(
+            NotificationId.fromString(notificationId),
+            request.newStatus(),
+            userEmail
+        );
+    }
+
     public static SendNotificationCommand toSendNotificationCommand(
         String recipientEmail,
         String senderEmail,

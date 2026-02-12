@@ -103,13 +103,13 @@ public class InvitationController {
 
     @PatchMapping("/{invitationId}")
     public ResponseEntity<?> acceptInvitation(
-        @PathVariable OrganizationId organizationId,
-        @PathVariable InvitationId invitationId
+        @PathVariable String organizationId,
+        @PathVariable String invitationId
     ) {
         var currentUserEmail = userContext.getCurrentUserEmail();
 
         var command =
-            InvitationCommandAssembler.toAcceptInvitationCommandFromIds(
+            InvitationCommandAssembler.toAcceptInvitationCommandFromStrings(
                 organizationId,
                 invitationId,
                 currentUserEmail
@@ -118,7 +118,7 @@ public class InvitationController {
         invitationCommandService.handle(command);
 
         var invitationResult =
-            InvitationResponseAssembler.toInvitationAcceptedResponse(
+            InvitationResponseAssembler.toInvitationAcceptedResponseFromString(
                 invitationId
             );
 
@@ -127,13 +127,13 @@ public class InvitationController {
 
     @DeleteMapping("/{invitationId}")
     public ResponseEntity<?> declineInvitation(
-        @PathVariable OrganizationId organizationId,
-        @PathVariable InvitationId invitationId
+        @PathVariable String organizationId,
+        @PathVariable String invitationId
     ) {
         var currentUserEmail = userContext.getCurrentUserEmail();
 
         var command =
-            InvitationCommandAssembler.toDeclineInvitationCommandFromIds(
+            InvitationCommandAssembler.toDeclineInvitationCommandFromStrings(
                 organizationId,
                 invitationId,
                 currentUserEmail
@@ -141,7 +141,7 @@ public class InvitationController {
         invitationCommandService.handle(command);
 
         var invitationResult =
-            InvitationResponseAssembler.toInvitationDeclinedResponse(
+            InvitationResponseAssembler.toInvitationDeclinedResponseFromString(
                 invitationId
             );
         return ResponseEntity.ok(invitationResult);

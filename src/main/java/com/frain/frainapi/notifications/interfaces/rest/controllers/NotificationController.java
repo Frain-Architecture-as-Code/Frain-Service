@@ -44,11 +44,11 @@ public class NotificationController {
     }
 
     @PatchMapping("/{notificationId}")
-    public ResponseEntity<NotificationResponse> updateNotificationStatus(@RequestBody UpdateNotificationStatusRequest request, @PathVariable NotificationId notificationId) {
+    public ResponseEntity<NotificationResponse> updateNotificationStatus(@RequestBody UpdateNotificationStatusRequest request, @PathVariable String notificationId) {
 
         var userEmail = userContext.getCurrentUserEmail();
 
-        var command = NotificationCommandAssembler.toUpdateNotificationStatusCommandFromRequest(request, notificationId, userEmail);
+        var command = NotificationCommandAssembler.toUpdateNotificationStatusCommandFromRequestAndString(request, notificationId, userEmail);
 
         var resultNotificationId = notificationCommandService.handle(command);
 
