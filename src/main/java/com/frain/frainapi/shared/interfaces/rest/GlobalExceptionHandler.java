@@ -3,6 +3,7 @@ package com.frain.frainapi.shared.interfaces.rest;
 import com.frain.frainapi.organizations.domain.exceptions.*;
 import com.frain.frainapi.projects.domain.exceptions.*;
 import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
+import com.frain.frainapi.shared.domain.exceptions.JwtIncompleteException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -126,6 +127,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.of("INVITATION_NOT_FOUND", ex.getMessage()));
+    }
+
+    // ========== JWT Exceptions ==========
+
+    @ExceptionHandler(JwtIncompleteException.class)
+    public ResponseEntity<ErrorResponse> handleJwtIncomplete(JwtIncompleteException ex) {
+        logger.warn("JWT incomplete: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.of("JWT_INCOMPLETE", ex.getMessage()));
     }
 
     // ========== Permission Exceptions ==========
