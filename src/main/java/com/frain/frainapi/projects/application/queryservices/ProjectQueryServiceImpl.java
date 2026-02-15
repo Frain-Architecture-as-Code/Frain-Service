@@ -5,6 +5,8 @@ import com.frain.frainapi.projects.domain.model.queries.GetAllProjectsByOrganiza
 import com.frain.frainapi.projects.domain.model.queries.GetProjectByIdQuery;
 import com.frain.frainapi.projects.domain.services.ProjectQueryService;
 import com.frain.frainapi.projects.infrastructure.repositories.ProjectRepository;
+import com.frain.frainapi.projects.interfaces.rest.controllers.ProjectContextUtils;
+import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,11 @@ import java.util.Optional;
 @Slf4j
 public class ProjectQueryServiceImpl implements ProjectQueryService {
     private final ProjectRepository projectRepository;
+    private final ProjectContextUtils projectContextUtils;
 
-    public ProjectQueryServiceImpl(ProjectRepository projectRepository) {
+    public ProjectQueryServiceImpl(ProjectRepository projectRepository, ProjectContextUtils projectContextUtils) {
         this.projectRepository = projectRepository;
+        this.projectContextUtils = projectContextUtils;
     }
 
 
@@ -28,6 +32,14 @@ public class ProjectQueryServiceImpl implements ProjectQueryService {
 
     @Override
     public List<Project> handle(GetAllProjectsByOrganizationIdQuery query) {
+
+        var isUserPartOfOrganization = projectContextUtils.isUserPartOfOrganization(query.userId(), query.organizationId().toString());
+
+        if (!isUserPartOfOrganization) {
+            throw new InsufficientPermissionsException("User does not have permissions to view projects in this organization.");
+        }
+
+
         return projectRepository.findAllByOrganizationId(query.organizationId());
     }
 }

@@ -4,7 +4,6 @@ import com.frain.frainapi.projects.domain.exceptions.ProjectNotFoundException;
 import com.frain.frainapi.projects.domain.model.queries.GetAllProjectsByOrganizationIdQuery;
 import com.frain.frainapi.projects.domain.model.queries.GetProjectByIdQuery;
 import com.frain.frainapi.projects.domain.model.valueobjects.OrganizationId;
-import com.frain.frainapi.projects.domain.model.valueobjects.ProjectId;
 import com.frain.frainapi.projects.domain.services.ProjectCommandService;
 import com.frain.frainapi.projects.domain.services.ProjectQueryService;
 import com.frain.frainapi.projects.interfaces.rest.controllers.assemblers.ProjectAssembler;
@@ -12,7 +11,6 @@ import com.frain.frainapi.projects.interfaces.rest.controllers.assemblers.Projec
 import com.frain.frainapi.projects.interfaces.rest.controllers.requests.CreateProjectRequest;
 import com.frain.frainapi.projects.interfaces.rest.controllers.requests.UpdateProjectVisibilityRequest;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ProjectResponse;
-import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -27,26 +25,18 @@ public class ProjectController {
     private final ProjectCommandService projectCommandService;
     private final ProjectQueryService projectQueryService;
     private final UserContext userContext;
-    private final ProjectContextUtils projectContextUtils;
 
-    public ProjectController(ProjectCommandService projectCommandService, ProjectQueryService projectQueryService, UserContext userContext, ProjectContextUtils projectContextUtils) {
+    public ProjectController(ProjectCommandService projectCommandService, ProjectQueryService projectQueryService, UserContext userContext) {
         this.projectCommandService = projectCommandService;
         this.projectQueryService = projectQueryService;
         this.userContext = userContext;
-        this.projectContextUtils = projectContextUtils;
     }
 
     @GetMapping
     public ResponseEntity<List<ProjectResponse>> getOrganizationsProjects(@PathVariable String organizationId) {
         var userId = userContext.getCurrentUserId();
 
-        var isUserPartOfOrganization = projectContextUtils.isUserPartOfOrganization(userId, organizationId);
-
-        if (!isUserPartOfOrganization) {
-            throw new InsufficientPermissionsException("User does not have permissions to view projects in this organization.");
-        }
-
-        var projects = projectQueryService.handle(new GetAllProjectsByOrganizationIdQuery(OrganizationId.fromString(organizationId)));
+        var projects = projectQueryService.handle(new GetAllProjectsByOrganizationIdQuery(OrganizationId.fromString(organizationId), userId));
 
         var response = ProjectAssembler.toResponseListFromEntities(projects);
 
