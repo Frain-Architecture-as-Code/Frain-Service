@@ -18,4 +18,9 @@ public abstract class AuditableEntity<T extends AbstractAggregateRoot<T>> extend
     private LocalDateTime createdAt;
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    public AuditableEntity() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
 }

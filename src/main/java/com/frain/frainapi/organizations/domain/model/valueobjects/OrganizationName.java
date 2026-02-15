@@ -17,4 +17,9 @@ public record OrganizationName(String value) {
             throw new InvalidOrganizationNameLengthException(value.length(), MIN_LENGTH, MAX_LENGTH);
         }
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }
