@@ -41,7 +41,7 @@ public class C4ModelController {
     }
 
     // SDK endpoint
-    @PutMapping
+    @PutMapping ("/sdk")
     public ResponseEntity<C4ModelResponse> updateC4Model(
             @PathVariable String projectId,
             @Valid @RequestBody C4Model c4Model
@@ -63,7 +63,6 @@ public class C4ModelController {
     @GetMapping
     public ResponseEntity<C4ModelResponse> getC4Model(@PathVariable String projectId) {
         var projectIdObj = ProjectId.fromString(projectId);
-        validateApiKeyForProject(projectIdObj);
 
         var project = getProjectOrThrow(projectIdObj);
 
@@ -76,7 +75,6 @@ public class C4ModelController {
     @GetMapping("/views")
     public ResponseEntity<List<ViewSummaryResponse>> getViewSummaries(@PathVariable String projectId) {
         var projectIdObj = ProjectId.fromString(projectId);
-        validateApiKeyForProject(projectIdObj);
 
         var project = getProjectOrThrow(projectIdObj);
 
@@ -98,7 +96,6 @@ public class C4ModelController {
             @PathVariable String viewId
     ) {
         var projectIdObj = ProjectId.fromString(projectId);
-        validateApiKeyForProject(projectIdObj);
 
         var project = getProjectOrThrow(projectIdObj);
         var view = project.getViewById(viewId)
@@ -115,7 +112,6 @@ public class C4ModelController {
             @Valid @RequestBody UpdateNodePositionRequest request
     ) {
         var projectIdObj = ProjectId.fromString(projectId);
-        validateApiKeyForProject(projectIdObj);
 
         var command = new UpdateNodePositionCommand(
                 projectIdObj,
@@ -142,7 +138,7 @@ public class C4ModelController {
 
     private void validateApiKeyForProject(ProjectId projectId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+
         if (!(authentication instanceof ApiKeyAuthenticationToken apiKeyAuth)) {
             throw new SecurityException("API Key authentication required");
         }

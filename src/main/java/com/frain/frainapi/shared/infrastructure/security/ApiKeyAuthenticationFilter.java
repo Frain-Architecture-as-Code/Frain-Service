@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String API_KEY_HEADER = "Frain-Api-Key";
-    private static final Pattern C4MODELS_PATH_PATTERN = Pattern.compile("^/api/v1/c4models/projects/([^/]+).*$");
+    private static final Pattern SDK_PATH_PATTERN = Pattern.compile("^/api/v1/c4models/projects/([^/]+)/sdk$");
 
     private final ProjectApiKeyQueryService projectApiKeyQueryService;
     private final ProjectApiKeyCommandService projectApiKeyCommandService;
@@ -41,24 +41,24 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return !path.matches("^/api/v1/c4models/projects/[^/]+/sdk$");
+    }
+
+    @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        
+
         String path = request.getRequestURI();
-        
-        // Only process c4models endpoints
-        if (!path.startsWith("/api/v1/c4models/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String apiKeyHeader = request.getHeader(API_KEY_HEADER);
 
         if (apiKeyHeader == null || apiKeyHeader.isBlank()) {
-            log.debug("No API key header found for c4models endpoint: {}", path);
+            log.debug("No API key header found for SDK endpoint: {}", path);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Missing Frain-Api-Key header\"}");
@@ -82,13 +82,13 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
         ProjectApiKey projectApiKey = projectApiKeyOpt.get();
 
         // Extract projectId from path and validate it matches the API key's project
-        Matcher matcher = C4MODELS_PATH_PATTERN.matcher(path);
+        Matcher matcher = SDK_PATH_PATTERN.matcher(path);
         if (matcher.matches()) {
             String pathProjectId = matcher.group(1);
             ProjectId apiKeyProjectId = projectApiKey.getProjectId();
-            
+
             if (!pathProjectId.equals(apiKeyProjectId.toString())) {
-                log.warn("API key project mismatch. Path: {}, API Key project: {}", 
+                log.warn("API key project mismatch. Path: {}, API Key project: {}",
                         pathProjectId, apiKeyProjectId);
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.setContentType("application/json");
@@ -115,15 +115,9 @@ public class ApiKeyAuthenticationFilter extends OncePerRequestFilter {
             // Log but don't fail the request if usage recording fails
             log.warn("Failed to record API key usage for key {}: {}", projectApiKey.getId(), e.getMessage());
         }
-        
+
         log.debug("API key authentication successful for project: {}", projectApiKey.getProjectId());
 
         filterChain.doFilter(request, response);
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        // This filter only applies to /api/v1/c4models/** paths
-        return !request.getRequestURI().startsWith("/api/v1/c4models/");
     }
 }
