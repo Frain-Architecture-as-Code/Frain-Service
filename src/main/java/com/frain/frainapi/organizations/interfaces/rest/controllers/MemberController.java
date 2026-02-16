@@ -57,4 +57,13 @@ public class MemberController {
         return ResponseEntity.ok(memberResponse);
     }
 
+    @GetMapping("/{memberId}")
+    public ResponseEntity<MemberResponse> getMember(@PathVariable String organizationId, @PathVariable String memberId) {
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
+
+        var response = MemberAssembler.toResponseFromEntity(currentMember);
+
+        return ResponseEntity.ok(response);
+    }
+
 }

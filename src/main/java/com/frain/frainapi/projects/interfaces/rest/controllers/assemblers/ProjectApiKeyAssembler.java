@@ -76,17 +76,12 @@ public class ProjectApiKeyAssembler {
     }
 
     public static ProjectApiKeyResponse toResponse(ProjectApiKey apiKey) {
-        // Only show first 12 characters of the API key for security
-        String prefix = apiKey.getApiKey().value();
-        if (prefix.length() > 12) {
-            prefix = prefix.substring(0, 12) + "...";
-        }
 
         return new ProjectApiKeyResponse(
                 apiKey.getId().toString(),
                 apiKey.getProjectId().toString(),
                 apiKey.getMemberId().toString(),
-                prefix,
+                apiKey.getApiKey().toString(),
                 apiKey.getLastUsedAt() != null ? apiKey.getLastUsedAt().toString() : null,
                 apiKey.getCreatedAt() != null ? apiKey.getCreatedAt().toString() : null
         );

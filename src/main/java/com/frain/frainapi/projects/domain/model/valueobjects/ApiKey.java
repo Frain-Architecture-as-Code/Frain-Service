@@ -17,4 +17,9 @@ public record ApiKey(@NotBlank(message = "Api key cannot be null or blank") Stri
     public boolean isValid() {
         return value != null && value.startsWith(PREFIX) && value.length() > PREFIX.length();
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }
