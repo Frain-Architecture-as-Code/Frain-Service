@@ -1,5 +1,6 @@
 package com.frain.frainapi.organizations.application.eventhandlers;
 
+import com.frain.frainapi.notifications.domain.model.valueobjects.NotificationType;
 import com.frain.frainapi.notifications.interfaces.acl.NotificationContextAcl;
 import com.frain.frainapi.organizations.domain.model.events.InvitationSentEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,11 @@ public class InvitationEventHandler {
             event.recipientEmail().toString(),
             event.senderEmail().toString(),
             String.format(
-                "You have been invited to %s",
+                "You have been invited to '%s'",
                 event.organizationName().toString()
             ),
             event.invitationId().toString(),
-            "INVITATION"
+                NotificationType.INVITATION.toString()
         );
     }
 }
