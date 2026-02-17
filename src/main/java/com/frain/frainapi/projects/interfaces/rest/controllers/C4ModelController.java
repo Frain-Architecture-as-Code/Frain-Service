@@ -13,6 +13,7 @@ import com.frain.frainapi.projects.domain.services.ProjectCommandService;
 import com.frain.frainapi.projects.domain.services.ProjectQueryService;
 import com.frain.frainapi.projects.interfaces.rest.controllers.requests.UpdateNodePositionRequest;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.C4ModelResponse;
+import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ProjectDetailsResponse;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ViewDetailResponse;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ViewSummaryResponse;
 import com.frain.frainapi.shared.infrastructure.security.ApiKeyAuthenticationToken;
@@ -71,6 +72,20 @@ public class C4ModelController {
                 project.getC4Model()
         ));
     }
+
+    @GetMapping("/details")
+    public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable String projectId) {
+        var projectIdObj = ProjectId.fromString(projectId);
+
+        var project = getProjectOrThrow(projectIdObj);
+
+        return ResponseEntity.ok(new ProjectDetailsResponse(
+                project.getC4Model().title(),
+                project.getC4Model().description(),
+                project.getUpdatedAt().toString()
+        ));
+    }
+
 
     @GetMapping("/views")
     public ResponseEntity<List<ViewSummaryResponse>> getViewSummaries(@PathVariable String projectId) {
