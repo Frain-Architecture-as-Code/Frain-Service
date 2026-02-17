@@ -16,6 +16,10 @@ public record InvitationId(UUID value) {
         return new InvitationId(UUID.randomUUID());
     }
 
+    public static InvitationId fromString(String value) {
+        return new InvitationId(UUID.fromString(value));
+    }
+
     @Override
     public String toString() {
         return value.toString();

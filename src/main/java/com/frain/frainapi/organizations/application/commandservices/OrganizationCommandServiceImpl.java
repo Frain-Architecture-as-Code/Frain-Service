@@ -32,7 +32,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
     @Transactional
     public void handle(UpdateOrganizationCommand command) {
 
-        var organization = organizationRepository.findById(command.organizationId()).orElseThrow(() -> new OrganizationNotFoundException(command.organizationId()));
+        var organization = organizationRepository.findById(command.organizationId()).orElseThrow(() -> new OrganizationNotFoundException(command.organizationId().toString()));
 
         organization.updateDetails(command.name(), command.visibility());
 

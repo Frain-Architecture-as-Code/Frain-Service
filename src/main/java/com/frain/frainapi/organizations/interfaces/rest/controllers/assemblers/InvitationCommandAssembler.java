@@ -11,15 +11,66 @@ import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 
 public class InvitationCommandAssembler {
 
-    public static SendInvitationCommand toSendInvitationCommandFromRequest(OrganizationId organizationId, Member inviter, SendInvitationRequest request) {
-        return new SendInvitationCommand(organizationId, inviter, request.targetEmail() , request.role());
+    public static SendInvitationCommand toSendInvitationCommandFromRequest(
+        String organizationId,
+        Member inviter,
+        EmailAddress senderEmail,
+        SendInvitationRequest request
+    ) {
+        return new SendInvitationCommand(
+            OrganizationId.fromString(organizationId),
+            inviter,
+            request.targetEmail(),
+            request.role(),
+            senderEmail
+        );
     }
 
-    public static AcceptInvitationCommand toAcceptInvitationCommandFromIds(OrganizationId organizationId, InvitationId invitationId, EmailAddress currentUserEmail) {
-        return new AcceptInvitationCommand(invitationId, organizationId, currentUserEmail);
+    public static AcceptInvitationCommand toAcceptInvitationCommandFromIds(
+        OrganizationId organizationId,
+        InvitationId invitationId,
+        EmailAddress currentUserEmail
+    ) {
+        return new AcceptInvitationCommand(
+            invitationId,
+            organizationId,
+            currentUserEmail
+        );
     }
 
-    public static DeclineInvitationCommand toDeclineInvitationCommandFromIds(OrganizationId organizationId, InvitationId invitationId, EmailAddress currentUserEmail) {
-        return new DeclineInvitationCommand(invitationId, organizationId, currentUserEmail);
+    public static AcceptInvitationCommand toAcceptInvitationCommandFromStrings(
+        String organizationId,
+        String invitationId,
+        EmailAddress currentUserEmail
+    ) {
+        return new AcceptInvitationCommand(
+            InvitationId.fromString(invitationId),
+            OrganizationId.fromString(organizationId),
+            currentUserEmail
+        );
+    }
+
+    public static DeclineInvitationCommand toDeclineInvitationCommandFromIds(
+        OrganizationId organizationId,
+        InvitationId invitationId,
+        EmailAddress currentUserEmail
+    ) {
+        return new DeclineInvitationCommand(
+            invitationId,
+            organizationId,
+            currentUserEmail
+        );
+    }
+
+    public static DeclineInvitationCommand toDeclineInvitationCommandFromStrings(
+        String organizationId,
+        String invitationId,
+        EmailAddress currentUserEmail
+    ) {
+        return new DeclineInvitationCommand(
+            InvitationId.fromString(invitationId),
+            OrganizationId.fromString(organizationId),
+            currentUserEmail
+        );
     }
 }

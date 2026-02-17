@@ -16,6 +16,10 @@ public record OrganizationId(UUID value) {
         return new OrganizationId(UUID.randomUUID());
     }
 
+    public static OrganizationId fromString(String value) {
+        return new OrganizationId(UUID.fromString(value));
+    }
+
     @Override
     public String toString() {
         return value.toString();

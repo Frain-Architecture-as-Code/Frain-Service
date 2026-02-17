@@ -17,10 +17,9 @@ import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.In
 import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.ResponseEntity;
-
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/organizations/{organizationId}/invitations")
@@ -30,83 +29,121 @@ public class InvitationController {
     private final InvitationCommandService invitationCommandService;
     private final InvitationQueryService invitationQueryService;
     private final MemberQueryService memberQueryService;
+    private final OrganizationContextUtils organizationContextUtils;
 
     private final UserContext userContext;
 
-
-    public InvitationController(InvitationCommandService invitationCommandService, InvitationQueryService invitationQueryService, MemberQueryService memberQueryService, UserContext userContext) {
+    public InvitationController(
+            InvitationCommandService invitationCommandService,
+            InvitationQueryService invitationQueryService,
+            MemberQueryService memberQueryService, OrganizationContextUtils organizationContextUtils,
+            UserContext userContext
+    ) {
         this.invitationCommandService = invitationCommandService;
         this.invitationQueryService = invitationQueryService;
         this.memberQueryService = memberQueryService;
+        this.organizationContextUtils = organizationContextUtils;
         this.userContext = userContext;
     }
 
-
     @GetMapping
-    public ResponseEntity<List<InvitationResponse>> getInvitations(@PathVariable OrganizationId organizationId) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
-
-        if (result.isEmpty()) {
-            throw new RuntimeException("Current user is not a member of the organization");
-        }
-
-        var currentMember = result.get();
+    public ResponseEntity<List<InvitationResponse>> getInvitations(
+        @PathVariable String organizationId
+    ) {
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
 
         if (!currentMember.isOwner()) {
-            throw new InsufficientPermissionsException("Only owner can view invitations");
+            throw new InsufficientPermissionsException(
+                "Only owner can view invitations"
+            );
         }
 
-        var invitations = invitationQueryService.handle(new GetInvitationsByOrganizationIdQuery(organizationId));
-        var invitationResponses = InvitationAssembler.toResponseListFromEntities(invitations);
+        var invitations = invitationQueryService.handle(
+            new GetInvitationsByOrganizationIdQuery(OrganizationId.fromString(organizationId))
+        );
+        var invitationResponses =
+            InvitationAssembler.toResponseListFromEntities(invitations);
 
         return ResponseEntity.ok(invitationResponses);
     }
 
     @PostMapping
-    public ResponseEntity<InvitationResponse> sendInvitation(@PathVariable OrganizationId organizationId, @RequestBody SendInvitationRequest request) {
-        var currentUserId = userContext.getCurrentUserId();
-        var result = memberQueryService.handle(new GetMemberByUserIdAndOrganizationIdQuery(currentUserId, organizationId));
-        if (result.isEmpty()) {
-            throw new RuntimeException("Current user is not a member of the organization");
-        }
-        var currentMember = result.get();
+    public ResponseEntity<InvitationResponse> sendInvitation(
+        @PathVariable String organizationId,
+        @RequestBody SendInvitationRequest request
+    ) {
 
-        var command = InvitationCommandAssembler.toSendInvitationCommandFromRequest(organizationId, currentMember, request);
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
+
+        var currentUserEmail = userContext.getCurrentUserEmail();
+
+        var command =
+            InvitationCommandAssembler.toSendInvitationCommandFromRequest(
+                organizationId,
+                currentMember,
+                currentUserEmail,
+                request
+            );
 
         var invitationId = invitationCommandService.handle(command);
 
-        var invitationResult = invitationQueryService.handle(new GetInvitationByIdQuery(invitationId));
+        var invitationResult = invitationQueryService.handle(
+            new GetInvitationByIdQuery(invitationId)
+        );
 
         if (invitationResult.isEmpty()) {
             throw new InvitationNotFoundException(invitationId);
         }
         var invitation = invitationResult.get();
-        var invitationResponse = InvitationAssembler.toResponseFromEntity(invitation);
+        var invitationResponse = InvitationAssembler.toResponseFromEntity(
+            invitation
+        );
         return ResponseEntity.ok(invitationResponse);
     }
 
     @PatchMapping("/{invitationId}")
-    public ResponseEntity<?> acceptInvitation(@PathVariable OrganizationId organizationId, @PathVariable InvitationId invitationId) {
+    public ResponseEntity<?> acceptInvitation(
+        @PathVariable String organizationId,
+        @PathVariable String invitationId
+    ) {
         var currentUserEmail = userContext.getCurrentUserEmail();
 
-        var command = InvitationCommandAssembler.toAcceptInvitationCommandFromIds(organizationId, invitationId, currentUserEmail);
+        var command =
+            InvitationCommandAssembler.toAcceptInvitationCommandFromStrings(
+                organizationId,
+                invitationId,
+                currentUserEmail
+            );
 
         invitationCommandService.handle(command);
 
-        var invitationResult = InvitationResponseAssembler.toInvitationAcceptedResponse(invitationId);
+        var invitationResult =
+            InvitationResponseAssembler.toInvitationAcceptedResponseFromString(
+                invitationId
+            );
 
         return ResponseEntity.ok(invitationResult);
     }
 
     @DeleteMapping("/{invitationId}")
-    public ResponseEntity<?> declineInvitation(@PathVariable OrganizationId organizationId, @PathVariable InvitationId invitationId) {
+    public ResponseEntity<?> declineInvitation(
+        @PathVariable String organizationId,
+        @PathVariable String invitationId
+    ) {
         var currentUserEmail = userContext.getCurrentUserEmail();
 
-        var command = InvitationCommandAssembler.toDeclineInvitationCommandFromIds(organizationId, invitationId, currentUserEmail);
+        var command =
+            InvitationCommandAssembler.toDeclineInvitationCommandFromStrings(
+                organizationId,
+                invitationId,
+                currentUserEmail
+            );
         invitationCommandService.handle(command);
 
-        var invitationResult = InvitationResponseAssembler.toInvitationDeclinedResponse(invitationId);
+        var invitationResult =
+            InvitationResponseAssembler.toInvitationDeclinedResponseFromString(
+                invitationId
+            );
         return ResponseEntity.ok(invitationResult);
     }
 }

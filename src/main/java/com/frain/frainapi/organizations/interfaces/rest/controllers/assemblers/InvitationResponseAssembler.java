@@ -11,9 +11,17 @@ public class InvitationResponseAssembler {
         );
     }
 
+    public static InvitationAcceptedResponse toInvitationAcceptedResponseFromString(String invitationId) {
+        return new InvitationAcceptedResponse(invitationId);
+    }
+
     public static InvitationDeclinedResponse toInvitationDeclinedResponse(InvitationId invitationId) {
         return new InvitationDeclinedResponse(
                 invitationId.toString()
         );
+    }
+
+    public static InvitationDeclinedResponse toInvitationDeclinedResponseFromString(String invitationId) {
+        return new InvitationDeclinedResponse(invitationId);
     }
 }

@@ -13,6 +13,7 @@ import com.frain.frainapi.projects.domain.services.ProjectCommandService;
 import com.frain.frainapi.projects.domain.services.ProjectQueryService;
 import com.frain.frainapi.projects.interfaces.rest.controllers.requests.UpdateNodePositionRequest;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.C4ModelResponse;
+import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ProjectDetailsResponse;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ViewDetailResponse;
 import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ViewSummaryResponse;
 import com.frain.frainapi.shared.infrastructure.security.ApiKeyAuthenticationToken;
@@ -41,41 +42,56 @@ public class C4ModelController {
     }
 
     // SDK endpoint
-    @PutMapping
+    @PutMapping ("/sdk")
     public ResponseEntity<C4ModelResponse> updateC4Model(
-            @PathVariable ProjectId projectId,
+            @PathVariable String projectId,
             @Valid @RequestBody C4Model c4Model
     ) {
-        validateApiKeyForProject(projectId);
+        var projectIdObj = ProjectId.fromString(projectId);
+        validateApiKeyForProject(projectIdObj);
 
-        var command = new UpdateC4ModelCommand(projectId, c4Model);
+        var command = new UpdateC4ModelCommand(projectIdObj, c4Model);
         projectCommandService.handle(command);
 
-        var project = getProjectOrThrow(projectId);
+        var project = getProjectOrThrow(projectIdObj);
 
         return ResponseEntity.ok(new C4ModelResponse(
-                projectId.toString(),
+                projectIdObj.toString(),
                 project.getC4Model()
         ));
     }
 
     @GetMapping
-    public ResponseEntity<C4ModelResponse> getC4Model(@PathVariable ProjectId projectId) {
-        validateApiKeyForProject(projectId);
+    public ResponseEntity<C4ModelResponse> getC4Model(@PathVariable String projectId) {
+        var projectIdObj = ProjectId.fromString(projectId);
 
-        var project = getProjectOrThrow(projectId);
+        var project = getProjectOrThrow(projectIdObj);
 
         return ResponseEntity.ok(new C4ModelResponse(
-                projectId.toString(),
+                projectIdObj.toString(),
                 project.getC4Model()
         ));
     }
 
-    @GetMapping("/views")
-    public ResponseEntity<List<ViewSummaryResponse>> getViewSummaries(@PathVariable ProjectId projectId) {
-        validateApiKeyForProject(projectId);
+    @GetMapping("/details")
+    public ResponseEntity<ProjectDetailsResponse> getProjectDetails(@PathVariable String projectId) {
+        var projectIdObj = ProjectId.fromString(projectId);
 
-        var project = getProjectOrThrow(projectId);
+        var project = getProjectOrThrow(projectIdObj);
+
+        return ResponseEntity.ok(new ProjectDetailsResponse(
+                project.getC4Model().title(),
+                project.getC4Model().description(),
+                project.getUpdatedAt().toString()
+        ));
+    }
+
+
+    @GetMapping("/views")
+    public ResponseEntity<List<ViewSummaryResponse>> getViewSummaries(@PathVariable String projectId) {
+        var projectIdObj = ProjectId.fromString(projectId);
+
+        var project = getProjectOrThrow(projectIdObj);
 
         var summaries = project.getViewSummaries().stream()
                 .map(vs -> new ViewSummaryResponse(
@@ -91,29 +107,29 @@ public class C4ModelController {
 
     @GetMapping("/views/{viewId}")
     public ResponseEntity<ViewDetailResponse> getViewDetail(
-            @PathVariable ProjectId projectId,
+            @PathVariable String projectId,
             @PathVariable String viewId
     ) {
-        validateApiKeyForProject(projectId);
+        var projectIdObj = ProjectId.fromString(projectId);
 
-        var project = getProjectOrThrow(projectId);
+        var project = getProjectOrThrow(projectIdObj);
         var view = project.getViewById(viewId)
-                .orElseThrow(() -> new ViewNotFoundException(viewId, projectId.toString()));
+                .orElseThrow(() -> new ViewNotFoundException(viewId, projectIdObj.toString()));
 
         return ResponseEntity.ok(toViewDetailResponse(view));
     }
 
     @PatchMapping("/views/{viewId}/nodes/{nodeId}")
     public ResponseEntity<ViewDetailResponse> updateNodePosition(
-            @PathVariable ProjectId projectId,
+            @PathVariable String projectId,
             @PathVariable String viewId,
             @PathVariable String nodeId,
             @Valid @RequestBody UpdateNodePositionRequest request
     ) {
-        validateApiKeyForProject(projectId);
+        var projectIdObj = ProjectId.fromString(projectId);
 
         var command = new UpdateNodePositionCommand(
-                projectId,
+                projectIdObj,
                 viewId,
                 nodeId,
                 request.x(),
@@ -123,9 +139,9 @@ public class C4ModelController {
         projectCommandService.handle(command);
 
         // Return the updated view
-        var project = getProjectOrThrow(projectId);
+        var project = getProjectOrThrow(projectIdObj);
         var view = project.getViewById(viewId)
-                .orElseThrow(() -> new ViewNotFoundException(viewId, projectId.toString()));
+                .orElseThrow(() -> new ViewNotFoundException(viewId, projectIdObj.toString()));
 
         return ResponseEntity.ok(toViewDetailResponse(view));
     }
@@ -137,7 +153,7 @@ public class C4ModelController {
 
     private void validateApiKeyForProject(ProjectId projectId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+
         if (!(authentication instanceof ApiKeyAuthenticationToken apiKeyAuth)) {
             throw new SecurityException("API Key authentication required");
         }

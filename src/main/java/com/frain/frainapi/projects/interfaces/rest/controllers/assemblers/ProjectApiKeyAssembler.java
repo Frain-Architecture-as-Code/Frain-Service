@@ -27,6 +27,20 @@ public class ProjectApiKeyAssembler {
         );
     }
 
+    public static CreateProjectApiKeyCommand toCreateProjectApiKeyCommandFromStrings(
+            CreateApiKeyRequest request,
+            String projectId,
+            String organizationId,
+            MemberId requestingMemberId
+    ) {
+        return new CreateProjectApiKeyCommand(
+                ProjectId.fromString(projectId),
+                OrganizationId.fromString(organizationId),
+                MemberId.fromString(request.targetMemberId()),
+                requestingMemberId
+        );
+    }
+
     public static RevokeProjectApiKeyCommand toRevokeCommand(
             ProjectApiKeyId apiKeyId,
             OrganizationId organizationId,
@@ -35,6 +49,18 @@ public class ProjectApiKeyAssembler {
         return new RevokeProjectApiKeyCommand(
                 apiKeyId,
                 organizationId,
+                requestingMemberId
+        );
+    }
+
+    public static RevokeProjectApiKeyCommand toRevokeCommandFromStrings(
+            String apiKeyId,
+            String organizationId,
+            MemberId requestingMemberId
+    ) {
+        return new RevokeProjectApiKeyCommand(
+                ProjectApiKeyId.fromString(apiKeyId),
+                OrganizationId.fromString(organizationId),
                 requestingMemberId
         );
     }
@@ -50,17 +76,12 @@ public class ProjectApiKeyAssembler {
     }
 
     public static ProjectApiKeyResponse toResponse(ProjectApiKey apiKey) {
-        // Only show first 12 characters of the API key for security
-        String prefix = apiKey.getApiKey().value();
-        if (prefix.length() > 12) {
-            prefix = prefix.substring(0, 12) + "...";
-        }
 
         return new ProjectApiKeyResponse(
                 apiKey.getId().toString(),
                 apiKey.getProjectId().toString(),
                 apiKey.getMemberId().toString(),
-                prefix,
+                apiKey.getApiKey().toString(),
                 apiKey.getLastUsedAt() != null ? apiKey.getLastUsedAt().toString() : null,
                 apiKey.getCreatedAt() != null ? apiKey.getCreatedAt().toString() : null
         );

@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Member extends AuditableEntity<Member> {
     @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private MemberId id; // This id is used within the organization
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "user_id"))

@@ -14,6 +14,7 @@ import lombok.Setter;
 @Getter
 public class Organization extends AuditableEntity<Organization> {
     @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private OrganizationId id;
 
     @Embedded

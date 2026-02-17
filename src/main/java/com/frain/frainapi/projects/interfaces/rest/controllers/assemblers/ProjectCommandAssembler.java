@@ -14,7 +14,15 @@ public class ProjectCommandAssembler {
         return new CreateProjectCommand(organizationId, userId, request.visibility());
     }
 
+    public static CreateProjectCommand toCreateProjectCommandFromRequestAndString(CreateProjectRequest request, UserId userId, String organizationId) {
+        return new CreateProjectCommand(OrganizationId.fromString(organizationId), userId, request.visibility());
+    }
+
     public static UpdateProjectVisibilityCommand toUpdateProjectVisibilityCommandFromRequest(OrganizationId organizationId, ProjectId projectId, UpdateProjectVisibilityRequest request, UserId userId) {
         return new UpdateProjectVisibilityCommand(request.visibility(), organizationId, userId, projectId);
+    }
+
+    public static UpdateProjectVisibilityCommand toUpdateProjectVisibilityCommandFromRequestAndStrings(String organizationId, String projectId, UpdateProjectVisibilityRequest request, UserId userId) {
+        return new UpdateProjectVisibilityCommand(request.visibility(), OrganizationId.fromString(organizationId), userId, ProjectId.fromString(projectId));
     }
 }

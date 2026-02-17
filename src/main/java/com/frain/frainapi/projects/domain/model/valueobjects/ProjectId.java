@@ -16,6 +16,10 @@ public record ProjectId(UUID value) {
         return new ProjectId(UUID.randomUUID());
     }
 
+    public static ProjectId fromString(String value) {
+        return new ProjectId(UUID.fromString(value));
+    }
+
     @Override
     public String toString() {
         return value.toString();

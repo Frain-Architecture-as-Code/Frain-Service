@@ -1,9 +1,9 @@
 package com.frain.frainapi.projects.interfaces.rest.controllers;
 
 import com.frain.frainapi.projects.domain.exceptions.ProjectNotFoundException;
+import com.frain.frainapi.projects.domain.model.queries.GetAllProjectsByOrganizationIdQuery;
 import com.frain.frainapi.projects.domain.model.queries.GetProjectByIdQuery;
 import com.frain.frainapi.projects.domain.model.valueobjects.OrganizationId;
-import com.frain.frainapi.projects.domain.model.valueobjects.ProjectId;
 import com.frain.frainapi.projects.domain.services.ProjectCommandService;
 import com.frain.frainapi.projects.domain.services.ProjectQueryService;
 import com.frain.frainapi.projects.interfaces.rest.controllers.assemblers.ProjectAssembler;
@@ -15,6 +15,8 @@ import com.frain.frainapi.shared.infrastructure.security.UserContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/organizations/{organizationId}/projects")
@@ -30,11 +32,22 @@ public class ProjectController {
         this.userContext = userContext;
     }
 
+    @GetMapping
+    public ResponseEntity<List<ProjectResponse>> getOrganizationsProjects(@PathVariable String organizationId) {
+        var userId = userContext.getCurrentUserId();
+
+        var projects = projectQueryService.handle(new GetAllProjectsByOrganizationIdQuery(OrganizationId.fromString(organizationId), userId));
+
+        var response = ProjectAssembler.toResponseListFromEntities(projects);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
-    public ResponseEntity<ProjectResponse> createProject(@PathVariable OrganizationId organizationId, @RequestBody CreateProjectRequest request) {
+    public ResponseEntity<ProjectResponse> createProject(@PathVariable String organizationId, @RequestBody CreateProjectRequest request) {
         var currentUserId = userContext.getCurrentUserId();
 
-        var command = ProjectCommandAssembler.toCreateProjectCommandFromRequest(request, currentUserId, organizationId);
+        var command = ProjectCommandAssembler.toCreateProjectCommandFromRequestAndString(request, currentUserId, organizationId);
 
         var result = projectCommandService.handle(command);
 
@@ -50,9 +63,9 @@ public class ProjectController {
     }
 
     @PatchMapping("/{projectId}")
-    public ResponseEntity<ProjectResponse> updateProject(@PathVariable OrganizationId organizationId, @PathVariable ProjectId projectId, @RequestBody UpdateProjectVisibilityRequest request) {
+    public ResponseEntity<ProjectResponse> updateProject(@PathVariable String organizationId, @PathVariable String projectId, @RequestBody UpdateProjectVisibilityRequest request) {
         var userId = userContext.getCurrentUserId();
-        var command = ProjectCommandAssembler.toUpdateProjectVisibilityCommandFromRequest(organizationId, projectId, request, userId);
+        var command = ProjectCommandAssembler.toUpdateProjectVisibilityCommandFromRequestAndStrings(organizationId, projectId, request, userId);
 
         var result = projectCommandService.handle(command);
 
