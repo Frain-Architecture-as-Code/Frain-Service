@@ -33,10 +33,10 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
     private final ApplicationEventPublisher eventPublisher;
 
     public InvitationCommandServiceImpl(
-        OrganizationRepository organizationRepository,
-        MemberRepository memberRepository,
-        InvitationRepository invitationRepository,
-        ApplicationEventPublisher eventPublisher
+            OrganizationRepository organizationRepository,
+            MemberRepository memberRepository,
+            InvitationRepository invitationRepository,
+            ApplicationEventPublisher eventPublisher
     ) {
         this.organizationRepository = organizationRepository;
         this.memberRepository = memberRepository;
@@ -48,42 +48,42 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
     @Transactional
     public InvitationId handle(SendInvitationCommand command) {
         var targetOrganization = organizationRepository
-            .findById(command.organizationId())
-            .orElseThrow(() ->
-                new OrganizationNotFoundException(command.organizationId().toString())
-            );
+                .findById(command.organizationId())
+                .orElseThrow(() ->
+                        new OrganizationNotFoundException(command.organizationId().toString())
+                );
 
         command.performBy().canInvitePeople();
 
         log.info(String.format("User %s is sending an invitation to %s for organization '%s'",
-            command.performBy().getName(),
-            command.targetEmail(),
-            targetOrganization.getName()
+                command.performBy().getName(),
+                command.targetEmail(),
+                targetOrganization.getName()
         ));
 
         var invitation = new Invitation(
-            InvitationId.generate(),
-            command.organizationId(),
-            command.performBy().getId(),
-            command.targetEmail(),
-            command.role()
+                InvitationId.generate(),
+                command.organizationId(),
+                command.performBy().getId(),
+                command.targetEmail(),
+                command.role()
         );
 
         invitationRepository.save(invitation);
 
         eventPublisher.publishEvent(
-            new InvitationSentEvent(
-                invitation.getId(),
-                command.senderEmail(),
-                invitation.getTargetEmail(),
-                targetOrganization.getName()
-            )
+                new InvitationSentEvent(
+                        invitation.getId(),
+                        command.senderEmail(),
+                        invitation.getTargetEmail(),
+                        targetOrganization.getName()
+                )
         );
 
         log.info(
-            "Invitation with ID {} has been sent to {}.",
-            invitation.getInviterId(),
-            command.targetEmail()
+                "Invitation with ID {} has been sent to {}.",
+                invitation.getInviterId(),
+                command.targetEmail()
         );
 
         return invitation.getId();
@@ -93,14 +93,14 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
     @Transactional
     public InvitationId handle(DeclineInvitationCommand command) {
         var invitation = invitationRepository
-            .findById(command.invitationId())
-            .orElseThrow(() ->
-                new InvitationNotFoundException(command.invitationId())
-            );
+                .findById(command.invitationId())
+                .orElseThrow(() ->
+                        new InvitationNotFoundException(command.invitationId())
+                );
 
         if (!invitation.getTargetEmail().equals(command.currentUserEmail())) {
             throw new InsufficientPermissionsException(
-                "You do not have permission to decline this invitation."
+                    "You do not have permission to decline this invitation."
             );
         }
 
@@ -109,16 +109,16 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
         invitationRepository.save(invitation);
 
         eventPublisher.publishEvent(
-            new InvitationDeclinedEvent(
-                invitation.getId(),
-                invitation.getInviterId(),
-                invitation.getTargetEmail()
-            )
+                new InvitationDeclinedEvent(
+                        invitation.getId(),
+                        invitation.getInviterId(),
+                        invitation.getTargetEmail()
+                )
         );
 
         log.info(
-            "Invitation with ID {} has been declined.",
-            command.invitationId()
+                "Invitation with ID {} has been declined.",
+                command.invitationId()
         );
         return invitation.getId();
     }
@@ -127,14 +127,18 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
     @Transactional
     public InvitationId handle(AcceptInvitationCommand command) {
         var invitation = invitationRepository
-            .findById(command.invitationId())
-            .orElseThrow(() ->
-                new InvitationNotFoundException(command.invitationId())
-            );
+                .findById(command.invitationId())
+                .orElseThrow(() ->
+                        new InvitationNotFoundException(command.invitationId())
+                );
 
-        if (!invitation.getTargetEmail().equals(command.currentUserEmail())) {
+
+        var currentUser = command.performBy();
+
+
+        if (!invitation.getTargetEmail().equals(currentUser.email())) {
             throw new InsufficientPermissionsException(
-                "You do not have permission to accept this invitation."
+                    "You do not have permission to accept this invitation."
             );
         }
 
@@ -142,16 +146,16 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
         invitationRepository.save(invitation);
 
         eventPublisher.publishEvent(
-            new InvitationAcceptedEvent(
-                invitation.getId(),
-                invitation.getInviterId(),
-                invitation.getTargetEmail()
-            )
+                new InvitationAcceptedEvent(
+                        invitation,
+                        currentUser.id(),
+                        currentUser.userName()
+                )
         );
 
         log.info(
-            "Invitation with ID {} has been accepted.",
-            command.invitationId()
+                "Invitation with ID {} has been accepted.",
+                command.invitationId()
         );
         return invitation.getId();
     }

@@ -3,6 +3,7 @@ package com.frain.frainapi.organizations.interfaces.rest.controllers;
 import com.frain.frainapi.organizations.domain.services.InvitationCommandService;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.InvitationCommandAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.InvitationResponseAssembler;
+import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.InvitationAcceptedResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +26,12 @@ public class InvitationActionController {
     }
 
     @PatchMapping("/{invitationId}/accept")
-    public ResponseEntity<?> acceptInvitation(@PathVariable String invitationId) {
-        var currentUserEmail = userContext.getCurrentUserEmail();
+    public ResponseEntity<InvitationAcceptedResponse> acceptInvitation(@PathVariable String invitationId) {
+        var user = userContext.getCurrentUser();
 
         var command = InvitationCommandAssembler.toAcceptInvitationCommand(
                 invitationId,
-                currentUserEmail
+                user
         );
 
         var resultInvitationId = invitationCommandService.handle(command);
