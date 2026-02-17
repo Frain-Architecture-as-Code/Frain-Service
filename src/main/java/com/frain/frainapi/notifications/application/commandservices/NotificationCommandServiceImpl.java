@@ -27,7 +27,7 @@ public class NotificationCommandServiceImpl
     }
 
     @Override
-    @Transactional
+    @Transactional()
     public NotificationId handle(SendNotificationCommand command) {
         var notificationId = NotificationId.generate();
 

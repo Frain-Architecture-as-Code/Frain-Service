@@ -26,50 +26,22 @@ public class InvitationCommandAssembler {
         );
     }
 
-    public static AcceptInvitationCommand toAcceptInvitationCommandFromIds(
-        OrganizationId organizationId,
-        InvitationId invitationId,
-        EmailAddress currentUserEmail
-    ) {
-        return new AcceptInvitationCommand(
-            invitationId,
-            organizationId,
-            currentUserEmail
-        );
-    }
-
-    public static AcceptInvitationCommand toAcceptInvitationCommandFromStrings(
-        String organizationId,
+    public static AcceptInvitationCommand toAcceptInvitationCommand(
         String invitationId,
         EmailAddress currentUserEmail
     ) {
         return new AcceptInvitationCommand(
             InvitationId.fromString(invitationId),
-            OrganizationId.fromString(organizationId),
             currentUserEmail
         );
     }
 
-    public static DeclineInvitationCommand toDeclineInvitationCommandFromIds(
-        OrganizationId organizationId,
-        InvitationId invitationId,
-        EmailAddress currentUserEmail
-    ) {
-        return new DeclineInvitationCommand(
-            invitationId,
-            organizationId,
-            currentUserEmail
-        );
-    }
-
-    public static DeclineInvitationCommand toDeclineInvitationCommandFromStrings(
-        String organizationId,
+    public static DeclineInvitationCommand toDeclineInvitationCommand(
         String invitationId,
         EmailAddress currentUserEmail
     ) {
         return new DeclineInvitationCommand(
             InvitationId.fromString(invitationId),
-            OrganizationId.fromString(organizationId),
             currentUserEmail
         );
     }

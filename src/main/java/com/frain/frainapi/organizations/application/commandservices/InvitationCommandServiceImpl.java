@@ -55,6 +55,12 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
 
         command.performBy().canInvitePeople();
 
+        log.info(String.format("User %s is sending an invitation to %s for organization '%s'",
+            command.performBy().getName(),
+            command.targetEmail(),
+            targetOrganization.getName()
+        ));
+
         var invitation = new Invitation(
             InvitationId.generate(),
             command.organizationId(),
@@ -128,7 +134,7 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
 
         if (!invitation.getTargetEmail().equals(command.currentUserEmail())) {
             throw new InsufficientPermissionsException(
-                "You do not have permission to decline this invitation."
+                "You do not have permission to accept this invitation."
             );
         }
 

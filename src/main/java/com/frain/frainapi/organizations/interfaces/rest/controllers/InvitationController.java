@@ -3,15 +3,11 @@ package com.frain.frainapi.organizations.interfaces.rest.controllers;
 import com.frain.frainapi.organizations.domain.exceptions.InvitationNotFoundException;
 import com.frain.frainapi.organizations.domain.model.queries.GetInvitationByIdQuery;
 import com.frain.frainapi.organizations.domain.model.queries.GetInvitationsByOrganizationIdQuery;
-import com.frain.frainapi.organizations.domain.model.queries.GetMemberByUserIdAndOrganizationIdQuery;
-import com.frain.frainapi.organizations.domain.model.valueobjects.InvitationId;
 import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
 import com.frain.frainapi.organizations.domain.services.InvitationCommandService;
 import com.frain.frainapi.organizations.domain.services.InvitationQueryService;
-import com.frain.frainapi.organizations.domain.services.MemberQueryService;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.InvitationAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.InvitationCommandAssembler;
-import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.InvitationResponseAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.SendInvitationRequest;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.InvitationResponse;
 import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
@@ -28,20 +24,17 @@ public class InvitationController {
 
     private final InvitationCommandService invitationCommandService;
     private final InvitationQueryService invitationQueryService;
-    private final MemberQueryService memberQueryService;
     private final OrganizationContextUtils organizationContextUtils;
-
     private final UserContext userContext;
 
     public InvitationController(
             InvitationCommandService invitationCommandService,
             InvitationQueryService invitationQueryService,
-            MemberQueryService memberQueryService, OrganizationContextUtils organizationContextUtils,
+            OrganizationContextUtils organizationContextUtils,
             UserContext userContext
     ) {
         this.invitationCommandService = invitationCommandService;
         this.invitationQueryService = invitationQueryService;
-        this.memberQueryService = memberQueryService;
         this.organizationContextUtils = organizationContextUtils;
         this.userContext = userContext;
     }
@@ -99,51 +92,5 @@ public class InvitationController {
             invitation
         );
         return ResponseEntity.ok(invitationResponse);
-    }
-
-    @PatchMapping("/{invitationId}")
-    public ResponseEntity<?> acceptInvitation(
-        @PathVariable String organizationId,
-        @PathVariable String invitationId
-    ) {
-        var currentUserEmail = userContext.getCurrentUserEmail();
-
-        var command =
-            InvitationCommandAssembler.toAcceptInvitationCommandFromStrings(
-                organizationId,
-                invitationId,
-                currentUserEmail
-            );
-
-        invitationCommandService.handle(command);
-
-        var invitationResult =
-            InvitationResponseAssembler.toInvitationAcceptedResponseFromString(
-                invitationId
-            );
-
-        return ResponseEntity.ok(invitationResult);
-    }
-
-    @DeleteMapping("/{invitationId}")
-    public ResponseEntity<?> declineInvitation(
-        @PathVariable String organizationId,
-        @PathVariable String invitationId
-    ) {
-        var currentUserEmail = userContext.getCurrentUserEmail();
-
-        var command =
-            InvitationCommandAssembler.toDeclineInvitationCommandFromStrings(
-                organizationId,
-                invitationId,
-                currentUserEmail
-            );
-        invitationCommandService.handle(command);
-
-        var invitationResult =
-            InvitationResponseAssembler.toInvitationDeclinedResponseFromString(
-                invitationId
-            );
-        return ResponseEntity.ok(invitationResult);
     }
 }
