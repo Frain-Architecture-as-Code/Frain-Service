@@ -35,6 +35,13 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         var targetMember = memberRepository.findById(command.targetMemberId())
                 .orElseThrow(() -> new MemberNotFoundException(command.targetMemberId()));
 
+        if (!targetMember.getName().equals(command.newName())) {
+            var existingMemberWithName = memberRepository.existsMemberByName(command.newName());
+            if (existingMemberWithName) {
+                throw new IllegalArgumentException(String.format("A member with name %s already exists in the organization.", command.newName()));
+            }
+        }
+
         if (command.performedBy().isOwner()) {
             targetMember.updateMember(command.newName(), command.newRole());
         } else if (command.performedBy().getId().equals(command.targetMemberId())) {
