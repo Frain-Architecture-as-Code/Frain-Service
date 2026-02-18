@@ -3,7 +3,6 @@ package com.frain.frainapi.notifications.interfaces.rest.controllers;
 import com.frain.frainapi.notifications.domain.exceptions.NotificationNotFoundException;
 import com.frain.frainapi.notifications.domain.model.queries.GetAllUserNotificationsQuery;
 import com.frain.frainapi.notifications.domain.model.queries.GetNotificationByIdQuery;
-import com.frain.frainapi.notifications.domain.model.valueobjects.NotificationId;
 import com.frain.frainapi.notifications.domain.services.NotificationCommandService;
 import com.frain.frainapi.notifications.domain.services.NotificationQueryService;
 import com.frain.frainapi.notifications.interfaces.rest.controllers.assemblers.NotificationAssembler;
@@ -11,7 +10,7 @@ import com.frain.frainapi.notifications.interfaces.rest.controllers.assemblers.N
 import com.frain.frainapi.notifications.interfaces.rest.controllers.requests.UpdateNotificationStatusRequest;
 import com.frain.frainapi.notifications.interfaces.rest.controllers.responses.NotificationResponse;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
-@Slf4j
+@Tag(name = "Notification")
 public class NotificationController {
     private final NotificationCommandService notificationCommandService;
     private final NotificationQueryService notificationQueryService;

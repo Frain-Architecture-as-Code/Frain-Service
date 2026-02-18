@@ -10,6 +10,7 @@ import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.M
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.MemberCommandAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.UpdateMemberRequest;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.responses.MemberResponse;
+import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
 import com.frain.frainapi.shared.infrastructure.security.UserContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -55,6 +56,17 @@ public class MemberController {
         var memberResponse = MemberAssembler.toResponseFromEntity(targetMember);
 
         return ResponseEntity.ok(memberResponse);
+    }
+
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<MemberId> kickMember(@PathVariable String organizationId, @PathVariable String memberId) {
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
+
+        var command = MemberCommandAssembler.toKickMemberFromOrganizationCommand(organizationId, memberId, currentMember);
+
+        var kickedMemberId = memberCommandService.handle(command);
+
+        return ResponseEntity.ok(kickedMemberId);
     }
 
     @GetMapping("/{memberId}")

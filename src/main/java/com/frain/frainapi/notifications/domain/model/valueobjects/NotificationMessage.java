@@ -9,4 +9,9 @@ public record NotificationMessage(@NotBlank  String value) {
     public static  NotificationMessage fromString(String message) {
         return new NotificationMessage(message);
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

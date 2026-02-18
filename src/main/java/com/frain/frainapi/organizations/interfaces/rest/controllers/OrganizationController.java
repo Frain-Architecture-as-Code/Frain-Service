@@ -4,6 +4,7 @@ import com.frain.frainapi.organizations.domain.exceptions.OrganizationNotFoundEx
 import com.frain.frainapi.organizations.domain.model.Member;
 import com.frain.frainapi.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.frain.frainapi.organizations.domain.model.queries.GetUserOrganizationsQuery;
+import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
 import com.frain.frainapi.organizations.domain.services.MemberQueryService;
 import com.frain.frainapi.organizations.domain.services.OrganizationCommandService;
 import com.frain.frainapi.organizations.domain.services.OrganizationQueryService;
@@ -57,8 +58,9 @@ public class OrganizationController {
     @PostMapping
     public ResponseEntity<OrganizationResponse> createOrganization(@RequestBody CreateOrganizationRequest request) {
         var currentUser = userContext.getCurrentUser();
+        var currentUserPicture = userContext.getUserPicture();
 
-        var command = OrganizationCommandAssembler.toCreateOrganizationCommandFromRequest(request, currentUser);
+        var command = OrganizationCommandAssembler.toCreateOrganizationCommandFromRequest(request, currentUser, currentUserPicture);
 
         var organizationId = organizationCommandService.handle(command);
 
@@ -88,6 +90,17 @@ public class OrganizationController {
         var organizationResponse = OrganizationAssembler.toResponseFromEntity(organization);
 
         return ResponseEntity.ok(organizationResponse);
+    }
+
+    @DeleteMapping("/{organizationId}")
+    public ResponseEntity<OrganizationId> deleteOrgnization(@PathVariable String organizationId) {
+        var currentMember = organizationContextUtils.validateUserBelongsToOrganization(organizationId);
+
+        var command = OrganizationCommandAssembler.toDeleteOrganizationCommandFromRequest(organizationId, currentMember);
+
+        var deletedOrganizationId = organizationCommandService.handle(command);
+
+        return ResponseEntity.ok(deletedOrganizationId);
     }
 
     @PatchMapping("/{organizationId}")

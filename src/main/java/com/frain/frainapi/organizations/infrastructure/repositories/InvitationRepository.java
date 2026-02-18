@@ -15,4 +15,6 @@ public interface InvitationRepository extends JpaRepository<Invitation, Invitati
     boolean existsByOrganizationIdAndTargetEmailAndStatus(OrganizationId organizationId, EmailAddress targetEmail, InvitationStatus status);
 
     List<Invitation> findAllByOrganizationId(OrganizationId organizationId);
+
+    void deleteAllByOrganizationId(OrganizationId organizationId);
 }

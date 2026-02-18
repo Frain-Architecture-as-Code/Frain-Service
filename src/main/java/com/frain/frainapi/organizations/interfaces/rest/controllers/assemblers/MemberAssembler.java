@@ -14,6 +14,7 @@ public class MemberAssembler {
                 member.getOrganizationId().toString(),
                 member.getName().toString(),
                 member.getRole().toString(),
+                member.getPicture(),
                 member.getCreatedAt().toString(),
                 member.getUpdatedAt().toString()
         );

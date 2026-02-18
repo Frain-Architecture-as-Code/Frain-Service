@@ -1,4 +1,4 @@
 package com.frain.frainapi.organizations.interfaces.rest.controllers.responses;
 
-public record MemberResponse(String memberId, String userId, String organizationId, String memberName, String memberRole, String createdAt, String updatedAt) {
+public record MemberResponse(String memberId, String userId, String organizationId, String memberName, String memberRole, String picture, String createdAt, String updatedAt) {
 }

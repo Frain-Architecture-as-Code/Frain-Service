@@ -19,6 +19,7 @@ import com.frain.frainapi.projects.interfaces.rest.controllers.responses.ViewSum
 import com.frain.frainapi.shared.infrastructure.security.ApiKeyAuthenticationToken;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -78,6 +79,17 @@ public class C4ModelController {
         var projectIdObj = ProjectId.fromString(projectId);
 
         var project = getProjectOrThrow(projectIdObj);
+
+        var c4model = project.getC4Model();
+
+
+        if (c4model == null) {
+            return ResponseEntity.ok(new ProjectDetailsResponse(
+                    "Untitled Project",
+                    "No description available. Use the SDK to set the C4 model.",
+                    project.getUpdatedAt().toString()
+            ));
+        }
 
         return ResponseEntity.ok(new ProjectDetailsResponse(
                 project.getC4Model().title(),

@@ -3,6 +3,7 @@ package com.frain.frainapi.notifications.infrastructure.acl;
 import com.frain.frainapi.notifications.domain.services.NotificationCommandService;
 import com.frain.frainapi.notifications.interfaces.acl.NotificationContextAcl;
 import com.frain.frainapi.notifications.interfaces.rest.controllers.assemblers.NotificationCommandAssembler;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class NotificationContextAclImpl implements NotificationContextAcl {
 
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public String sendNotification(String recipient, String sender, String message, String resourceId, String type) {
         var command = NotificationCommandAssembler.toSendNotificationCommand(recipient, sender, message, resourceId, type);
 

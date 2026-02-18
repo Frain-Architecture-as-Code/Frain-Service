@@ -55,7 +55,7 @@ public class Organization extends AuditableEntity<Organization> {
         this.ownerMemberId = newOwnerId;
     }
 
-    public Member enrollMember(MemberId memberId, UserId userId, MemberName name, MemberRole role) {
-        return new Member(memberId, this.id, userId, name, role);
+    public Member enrollMember(MemberId memberId, UserId userId, MemberName name, MemberRole role, String pictureUrl) {
+        return new Member(memberId, this.id, userId, name, role, pictureUrl);
     }
 }
