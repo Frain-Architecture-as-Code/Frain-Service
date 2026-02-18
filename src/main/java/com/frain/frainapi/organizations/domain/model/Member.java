@@ -73,6 +73,14 @@ public class Member extends AuditableEntity<Member> {
         throw new InsufficientPermissionsException("Only owners can promote members");
     }
 
+    public boolean canKickMember(MemberRole targetMemberRole) {
+        if (isOwner()) {
+            return true;
+        }
+        // this means that admin or contributor is trying to kick an admin
+        return targetMemberRole != MemberRole.ADMIN;
+    }
+
     public void updateMember(MemberName name, MemberRole role) {
         if (name != null) {
             this.name = name;

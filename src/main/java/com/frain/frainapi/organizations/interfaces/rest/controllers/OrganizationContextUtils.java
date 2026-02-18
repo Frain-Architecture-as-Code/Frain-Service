@@ -35,4 +35,16 @@ public class OrganizationContextUtils {
         );
         return result.get();
     }
+
+    public Member getMemberById(String memberId) {
+        var result = memberQueryService.handle(MemberQueryAssembler.toGetMemberByIdQuery(memberId));
+
+        if (result.isEmpty()) {
+            log.error("Member with id {} not found", memberId);
+            throw new RuntimeException("Member not found");
+        }
+
+        return result.get();
+
+    }
 }
