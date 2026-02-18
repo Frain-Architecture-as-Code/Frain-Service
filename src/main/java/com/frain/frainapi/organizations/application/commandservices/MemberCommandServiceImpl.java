@@ -42,6 +42,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     public MemberId handle(EnrollMemberCommand command) {
         var memberId = MemberId.generate();
         var newMember = new Member(
