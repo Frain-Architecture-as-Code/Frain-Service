@@ -57,7 +57,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 command.organizationId(),
                 command.userId(),
                 new MemberName(command.userName().toString()),
-                command.role()
+                command.role(), command.picture()
         );
 
         memberRepository.save(newMember);

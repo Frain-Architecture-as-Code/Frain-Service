@@ -11,8 +11,8 @@ import com.frain.frainapi.organizations.interfaces.rest.controllers.requests.Upd
 import com.frain.frainapi.shared.domain.model.valueobjects.User;
 
 public class OrganizationCommandAssembler {
-    public static CreateOrganizationCommand toCreateOrganizationCommandFromRequest(CreateOrganizationRequest request, User currentUser) {
-       return new CreateOrganizationCommand(request.name(), request.visibility(), currentUser.id(), new MemberName(currentUser.userName().toString()));
+    public static CreateOrganizationCommand toCreateOrganizationCommandFromRequest(CreateOrganizationRequest request, User currentUser, String imageUrl) {
+       return new CreateOrganizationCommand(request.name(), request.visibility(), currentUser.id(), new MemberName(currentUser.userName().toString()), imageUrl);
     }
 
     public static UpdateOrganizationCommand toUpdateOrganizationCommandFromRequest(String organizationId, UpdateOrganizationRequest request, Member requestingMember) {

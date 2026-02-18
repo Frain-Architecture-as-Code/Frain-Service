@@ -52,7 +52,7 @@ public class InvitationEventHandler {
 
         var invitation = event.invitation();
 
-        var command = new EnrollMemberCommand(event.performBy(), invitation.getOrganizationId(), event.performByName(), invitation.getRole());
+        var command = new EnrollMemberCommand(event.performBy(), invitation.getOrganizationId(), event.performByName(), invitation.getRole(), "");
 
         var result = memberCommandService.handle(command);
 

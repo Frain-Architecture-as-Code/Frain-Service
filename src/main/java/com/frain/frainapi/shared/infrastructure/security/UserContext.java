@@ -73,11 +73,27 @@ public class UserContext {
         throw  new JwtIncompleteException("Claim 'email' is missing in the JWT token");
     }
 
+    public String getUserPicture() {
+        Object principal = getPrincipal();
+
+        if (principal instanceof Jwt jwt) {
+            String picture = jwt.getClaimAsString("picture");
+            if (picture != null) {
+                return picture;
+            } else {
+                throw new JwtIncompleteException("Claim 'picture' is missing in the JWT token");
+            }
+        }
+
+        throw  new JwtIncompleteException("Claim 'picture' is missing in the JWT token");
+    }
+
     public User getCurrentUser() {
         return new User(
                 getCurrentUserId(),
                 getCurrentUserName(),
-                getCurrentUserEmail()
+                getCurrentUserEmail(),
+                getUserPicture()
         );
     }
 }

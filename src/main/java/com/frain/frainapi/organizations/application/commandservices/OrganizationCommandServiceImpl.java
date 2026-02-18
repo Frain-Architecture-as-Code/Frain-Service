@@ -52,7 +52,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
 
         var organizationId = OrganizationId.generate();
 
-        var member = new Member(MemberId.generate(), organizationId, command.ownerUserId(), command.ownerName(), MemberRole.OWNER);
+        var member = new Member(MemberId.generate(), organizationId, command.ownerUserId(), command.ownerName(), MemberRole.OWNER, command.ownerPictureUrl());
         var organization = new Organization(organizationId, command.name(), member.getId(), command.visibility());
 
         organizationRepository.save(organization);

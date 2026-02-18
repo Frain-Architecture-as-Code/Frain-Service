@@ -15,7 +15,8 @@ public class MemberAssembler {
                 member.getName().toString(),
                 member.getRole().toString(),
                 member.getCreatedAt().toString(),
-                member.getUpdatedAt().toString()
+                member.getUpdatedAt().toString(),
+                member.getPicture()
         );
     }
 

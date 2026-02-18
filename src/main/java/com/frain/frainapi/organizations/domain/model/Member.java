@@ -9,6 +9,7 @@ import com.frain.frainapi.shared.domain.model.AuditableEntity;
 import com.frain.frainapi.shared.domain.exceptions.InsufficientPermissionsException;
 import com.frain.frainapi.shared.domain.model.valueobjects.UserId;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,7 +35,11 @@ public class Member extends AuditableEntity<Member> {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    public Member(MemberId id, OrganizationId organizationId, UserId userId, MemberName name, MemberRole role) {
+    @NotBlank
+    private String picture;
+
+    public Member(MemberId id, OrganizationId organizationId, UserId userId, MemberName name, MemberRole role, String picture) {
+        this.picture = picture;
         if (organizationId == null) {
             throw new OrganizationNameRequiredException();
         }

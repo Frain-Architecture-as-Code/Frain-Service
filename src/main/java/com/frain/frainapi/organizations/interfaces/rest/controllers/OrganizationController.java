@@ -58,8 +58,9 @@ public class OrganizationController {
     @PostMapping
     public ResponseEntity<OrganizationResponse> createOrganization(@RequestBody CreateOrganizationRequest request) {
         var currentUser = userContext.getCurrentUser();
+        var currentUserPicture = userContext.getUserPicture();
 
-        var command = OrganizationCommandAssembler.toCreateOrganizationCommandFromRequest(request, currentUser);
+        var command = OrganizationCommandAssembler.toCreateOrganizationCommandFromRequest(request, currentUser, currentUserPicture);
 
         var organizationId = organizationCommandService.handle(command);
 
