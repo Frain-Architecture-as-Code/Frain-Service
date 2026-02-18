@@ -17,4 +17,6 @@ public interface MemberRepository extends JpaRepository<Member, MemberId> {
     List<Member> findAllByOrganizationId(OrganizationId organizationId);
 
     boolean existsByUserIdAndOrganizationId(UserId userId, OrganizationId organizationId);
+
+    void deleteAllByOrganizationId(OrganizationId organizationId);
 }

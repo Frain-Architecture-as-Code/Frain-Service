@@ -37,7 +37,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         if (command.performedBy().isOwner()) {
             targetMember.updateMember(command.newName(), command.newRole());
-        } else if (command.performedBy().getId() == command.targetMemberId()) {
+        } else if (command.performedBy().getId().equals(command.targetMemberId())) {
+            log.info("Updating name of member with ID {} by themselves", command.targetMemberId());
             targetMember.updateMember(command.newName(), null);
         }
 
@@ -60,11 +61,11 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         );
 
         memberRepository.save(newMember);
-        log.info(String.format("User %s has been enrolled to organization with ID %s as %s",
+        log.info("User %s has been enrolled to organization with ID %s as %s",
                 command.userName(),
                 command.organizationId(),
                 command.role().toString()
-        ));
+        );
         return memberId;
     }
 
