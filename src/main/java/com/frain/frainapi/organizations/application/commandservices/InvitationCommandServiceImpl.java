@@ -1,7 +1,6 @@
 package com.frain.frainapi.organizations.application.commandservices;
 
 import com.frain.frainapi.organizations.domain.exceptions.InvitationNotFoundException;
-import com.frain.frainapi.organizations.domain.exceptions.MemberNotFoundException;
 import com.frain.frainapi.organizations.domain.exceptions.OrganizationNotFoundException;
 import com.frain.frainapi.organizations.domain.model.Invitation;
 import com.frain.frainapi.organizations.domain.model.commands.AcceptInvitationCommand;
@@ -149,7 +148,8 @@ public class InvitationCommandServiceImpl implements InvitationCommandService {
                 new InvitationAcceptedEvent(
                         invitation,
                         currentUser.id(),
-                        currentUser.userName()
+                        currentUser.userName(),
+                        command.performBy().picture()
                 )
         );
 

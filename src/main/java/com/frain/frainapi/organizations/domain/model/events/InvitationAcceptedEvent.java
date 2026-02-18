@@ -9,5 +9,5 @@ import com.frain.frainapi.shared.domain.model.valueobjects.EmailAddress;
 import com.frain.frainapi.shared.domain.model.valueobjects.UserId;
 import com.frain.frainapi.shared.domain.model.valueobjects.UserName;
 
-public record InvitationAcceptedEvent(Invitation invitation, UserId performBy, UserName performByName) {
+public record InvitationAcceptedEvent(Invitation invitation, UserId performBy, UserName performByName, String newMemberPicture) {
 }
