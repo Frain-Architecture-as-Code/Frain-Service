@@ -1,14 +1,11 @@
 package com.frain.frainapi.organizations.interfaces.rest.controllers;
 
 import com.frain.frainapi.organizations.domain.exceptions.OrganizationNotFoundException;
-import com.frain.frainapi.organizations.domain.model.Member;
 import com.frain.frainapi.organizations.domain.model.queries.GetOrganizationByIdQuery;
 import com.frain.frainapi.organizations.domain.model.queries.GetUserOrganizationsQuery;
 import com.frain.frainapi.organizations.domain.model.valueobjects.OrganizationId;
-import com.frain.frainapi.organizations.domain.services.MemberQueryService;
 import com.frain.frainapi.organizations.domain.services.OrganizationCommandService;
 import com.frain.frainapi.organizations.domain.services.OrganizationQueryService;
-import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.MemberQueryAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.OrganizationAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.OrganizationCommandAssembler;
 import com.frain.frainapi.organizations.interfaces.rest.controllers.assemblers.OrganizationQueryAssembler;
@@ -29,15 +26,13 @@ public class OrganizationController {
 
     private final OrganizationCommandService organizationCommandService;
     private final OrganizationQueryService organizationQueryService;
-    private final MemberQueryService memberQueryService;
     private final OrganizationContextUtils organizationContextUtils;
 
     private final UserContext userContext;
 
-    public OrganizationController(OrganizationCommandService organizationCommandService, OrganizationQueryService organizationQueryService, MemberQueryService memberQueryService, OrganizationContextUtils organizationContextUtils, UserContext userContext) {
+    public OrganizationController(OrganizationCommandService organizationCommandService, OrganizationQueryService organizationQueryService, OrganizationContextUtils organizationContextUtils, UserContext userContext) {
         this.organizationCommandService = organizationCommandService;
         this.organizationQueryService = organizationQueryService;
-        this.memberQueryService = memberQueryService;
         this.organizationContextUtils = organizationContextUtils;
         this.userContext = userContext;
     }

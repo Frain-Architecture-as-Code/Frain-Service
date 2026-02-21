@@ -79,6 +79,13 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of("INVALID_PROJECT_NAME_LENGTH", ex.getMessage()));
     }
 
+    @ExceptionHandler(InvalidOrganizationNameLengthException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidOrganizationNameLength(InvalidOrganizationNameLengthException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.of("INVALID_ORGANIZATION_NAME_LENGTH", ex.getMessage()));
+    }
+
     @ExceptionHandler(InvalidC4ModelSchemaException.class)
     public ResponseEntity<ErrorResponse> handleInvalidC4ModelSchema(InvalidC4ModelSchemaException ex) {
         logger.warn("Invalid C4Model schema: {}", ex.getMessage());

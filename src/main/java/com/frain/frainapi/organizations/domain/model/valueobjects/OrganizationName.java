@@ -18,6 +18,10 @@ public record OrganizationName(String value) {
         }
     }
 
+    public static OrganizationName fromString(String value) {
+        return new OrganizationName(value);
+    }
+
     @Override
     public String toString() {
         return value;

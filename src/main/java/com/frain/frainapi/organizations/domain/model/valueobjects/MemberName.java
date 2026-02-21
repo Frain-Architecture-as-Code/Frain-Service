@@ -18,6 +18,10 @@ public record MemberName(String value) {
         }
     }
 
+    public static MemberName fromString(String value) {
+        return new MemberName(value);
+    }
+
     @Override
     public String toString() {
         return value;
