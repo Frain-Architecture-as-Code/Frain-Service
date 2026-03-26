@@ -83,7 +83,8 @@ public class ProjectApiKeyAssembler {
                 apiKey.getMemberId().toString(),
                 apiKey.getApiKey().toString(),
                 apiKey.getLastUsedAt() != null ? apiKey.getLastUsedAt().toString() : null,
-                apiKey.getCreatedAt() != null ? apiKey.getCreatedAt().toString() : null
+                apiKey.getCreatedAt() != null ? apiKey.getCreatedAt().toString() : null,
+                apiKey.getUpdatedAt() != null ? apiKey.getUpdatedAt().toString() : null
         );
     }
 }

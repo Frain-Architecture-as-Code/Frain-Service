@@ -8,7 +8,8 @@ public record ProjectApiKeyResponse(
         String id,
         String projectId,
         String memberId,
-        String apiKeyPrefix,
+        String apiKeySecret,
         String lastUsedAt,
-        String createdAt
+        String createdAt,
+        String updatedAt
 ) {}
